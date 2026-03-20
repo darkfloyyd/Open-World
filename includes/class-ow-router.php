@@ -96,6 +96,11 @@ class OW_Router {
 
 		// Priority 2: Clone and prefix ALL existing WordPress rules
 		foreach ( $rules as $match => $query ) {
+			// Skip rules already prefixed with a lang group
+			if ( preg_match( '#^\^?\(' . $lang_regex . '\)#', $match ) ) {
+				continue;
+			}
+
 			// Do not prefix REST API, wp-admin or strictly technical internal endpoints
 			if ( preg_match( '#^(wp-json|wp-admin)#', $match ) ) {
 				continue;
@@ -143,7 +148,7 @@ class OW_Router {
 		self::$current_lang = $lang;
 
 		// If only ow_lang is set (no pagename) → front page
-		if ( empty( $query_vars['pagename'] ) && empty( $query_vars['page_id'] ) && empty( $query_vars['p'] ) ) {
+		if ( empty( $query_vars['pagename'] ) && empty( $query_vars['page_id'] ) && empty( $query_vars['p'] ) && empty( $query_vars['name'] ) ) {
 			// Tell WP to load the front page
 			if ( 'page' === get_option( 'show_on_front' ) ) {
 				$front_id = (int) get_option( 'page_on_front' );
@@ -194,7 +199,9 @@ class OW_Router {
 		// Clears any stale cookie left from a previous non-default language visit.
 		$cookie_lang = isset( $_COOKIE['ow_lang'] ) ? sanitize_key( wp_unslash( $_COOKIE['ow_lang'] ) ) : '';
 		if ( ! empty( $cookie_lang ) ) {
-			$this->set_lang_cookie( $default );
+			if ( $cookie_lang !== $default ) {
+				$this->set_lang_cookie( $default );
+			}
 			return;
 		}
 
@@ -229,12 +236,15 @@ class OW_Router {
 	}
 
 	public function filter_url( $url ) {
+		static $running = false;
+		if ( $running ) return $url;
+
 		if ( ! is_string( $url ) ) return $url;
 
 		$lang    = self::get_current_lang();
 		$default = OW_Languages::get_default();
 
-		if ( $lang === $default || is_admin() || wp_doing_ajax() || wp_is_json_request() ) {
+		if ( $lang === $default || is_admin() || wp_doing_ajax() || wp_is_json_request() || wp_doing_cron() ) {
 			return $url;
 		}
 
@@ -248,19 +258,21 @@ class OW_Router {
 
 		$relative = substr( $url, strlen( $home_url ) );
 
-		// Skip WP core files and REST API endpoints
 		if ( preg_match( '#^wp-(admin|includes|content|json|login\.php|register\.php|cron\.php|activate\.php|signup\.php)#i', ltrim( $relative, '/' ) ) ) {
 			return $url;
 		}
 
-		// Skip if already contains a valid language prefix
 		$segments = explode( '/', ltrim( $relative, '/' ) );
 		$first    = strtolower( $segments[0] ?? '' );
 		if ( $first && OW_Languages::is_valid( $first ) ) {
 			return $url;
 		}
 
-		return $home_url . $lang . '/' . ltrim( $relative, '/' );
+		$running = true;
+		$result  = $home_url . $lang . '/' . ltrim( $relative, '/' );
+		$running = false;
+
+		return $result;
 	}
 
 	// ── URL helpers ───────────────────────────────────────────────────────────
@@ -271,7 +283,14 @@ class OW_Router {
 		$default = OW_Languages::get_default();
 
 		// Strip any existing lang prefix from path (e.g. /pl/ → /)
-		$url = preg_replace( '#(https?://[^/]+)/([a-z]{2,3})((?:/.*)?$)#', '$1$3', $url );
+		$url = preg_replace_callback(
+			'#(https?://[^/]+)/([a-z]{2,3})((?:/.*)?$)#',
+				function( $m ) {
+					return OW_Languages::is_valid( $m[2] ) ? $m[1] . $m[3] : $m[0];
+				},
+				$url
+		);
+
 		// Ensure url ends with / at the path root
 		if ( preg_match( '#https?://[^/]+$#', $url ) ) {
 			$url .= '/';
@@ -293,7 +312,8 @@ class OW_Router {
 
 	public function add_hreflang_tags(): void {
 		$server_uri  = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
-		$current_url = home_url( $server_uri );
+		$path_only   = wp_parse_url( $server_uri, PHP_URL_PATH ) ?: '/';
+		$current_url = home_url( $path_only );
 		$default     = OW_Languages::get_default();
 
 		// Only include active (public) languages in hreflang

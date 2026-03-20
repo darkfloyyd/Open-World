@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name:       Open World
- * Plugin URI:        https://github.com/darkfloyyd/open-world
+ * Plugin URI:        https://buymeacoffee.com/jakubmisiak
  * Description:       Complete multilingual solution — dynamic strings, WooCommerce integration, URL-based language switcher for free.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Tested up to:      6.9
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-define( 'OW_VERSION', '1.0.0' );
+define( 'OW_VERSION', '1.0.1' );
 define( 'OW_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'OW_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'OW_PLUGIN_FILE', __FILE__ );
