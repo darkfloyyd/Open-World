@@ -84,8 +84,11 @@ class OW_Engine {
 	// ── Locale ────────────────────────────────────────────────────────────────
 
 	public function determine_locale( string $locale ): string {
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			return $locale; // Do not hijack admin dashboard language
+		}
 		$lang = OW_Router::get_current_lang();
-		return OW_Languages::get_locale( $lang );
+		return OW_Languages::get_locale( $lang ) ?: $locale;
 	}
 }
 
