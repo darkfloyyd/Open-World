@@ -11,23 +11,23 @@ document.addEventListener('DOMContentLoaded', function () {
 	const $ = (sel, ctx) => (ctx || document).querySelector(sel);
 	const $$ = (sel, ctx) => [...(ctx || document).querySelectorAll(sel)];
 
-	const sidebar     = $('#ow-inline-sidebar');
-	const body        = $('#ow-sidebar-body');
-	const footer      = $('#ow-sidebar-footer');
-	const closeBtn    = $('#ow-sidebar-close');
-	const deeplAllBtn = $('#ow-deepl-all');
-	const saveAllBtn  = $('#ow-save-all');
-	const languages   = window.owInlineLanguages || [];
-	const stringMap   = window.owStringMap || {};
-	const cfg         = window.owInline || {};
+	const sidebar = $('#ow-inline-sidebar');
+	const body = $('#ow-sidebar-body');
+	const footer = $('#ow-sidebar-footer');
+	const closeBtn = $('#ow-sidebar-close');
+	const atAllBtn = $('#ow-at-all');
+	const saveAllBtn = $('#ow-save-all');
+	const languages = window.owInlineLanguages || [];
+	const stringMap = window.owStringMap || {};
+	const cfg = window.owInline || {};
 
 	if (!sidebar || !languages.length || !Object.keys(stringMap).length) {
 		console.warn('OW Inline Editor: Initialization aborted. Missing dependencies.');
 		return;
 	}
 
-	let activeMsgid   = null;
-	let activeEl      = null;
+	let activeMsgid = null;
+	let activeEl = null;
 
 	// Keep track of which msgids actually appear on the page
 	const pageStrings = new Set();
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		uniqueStrings.forEach(entry => {
 			const isOnPage = pageStrings.has(entry.msgid);
 			const badge = isOnPage ? '<span class="ow-sidebar__list-badge">On Page</span>' : '';
-			
+
 			html += `<div class="ow-sidebar__list-item" data-msgid="${escAttr(entry.msgid)}" data-domain="${escAttr(entry.domain)}">`;
 			html += `<div class="ow-sidebar__list-header">`;
 			html += `<div class="ow-sidebar__list-text">${esc(entry.msgid)}</div>`;
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		// Bind clicks to list items
 		$$('.ow-sidebar__list-header', body).forEach(header => {
-			header.addEventListener('click', function() {
+			header.addEventListener('click', function () {
 				const item = this.closest('.ow-sidebar__list-item');
 				activateString(item.dataset.owMsgid || item.getAttribute('data-msgid'), item.dataset.domain || item.getAttribute('data-domain'));
 			});
@@ -150,18 +150,18 @@ document.addEventListener('DOMContentLoaded', function () {
 		activeMsgid = msgid;
 
 		// Activate sidebar item
-		const item = $(`.ow-sidebar__list-item[data-msgid="${escAttr(msgid)}"]`, body);
+		const item = $$('.ow-sidebar__list-item', body).find(el => (el.dataset.msgid || el.getAttribute('data-msgid')) === msgid);
 		if (item) {
 			item.classList.add('ow-sidebar__list-item--active');
 			const editorEl = $('.ow-sidebar__list-editor', item);
 			editorEl.style.display = 'block';
 			editorEl.innerHTML = '<p class="ow-sidebar__loading">⏳ Loading translations…</p>';
-			
+
 			// Scroll sidebar to item smoothly
 			item.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
 			// Highlight on page if it exists
-			const pageEls = $$(`.ow-translatable[data-ow-msgid="${escAttr(msgid)}"]`);
+			const pageEls = $$('.ow-translatable').filter(el => (el.dataset.owMsgid || el.getAttribute('data-ow-msgid')) === msgid);
 			if (pageEls.length > 0) {
 				activeEl = pageEls[0];
 				activeEl.classList.add('ow-translatable--active');
@@ -181,8 +181,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	function renderEditorFields(container, msgid, domain, translations) {
 		let html = '';
 		languages.forEach(lang => {
-			const val       = translations[lang.code] || '';
-			const isEmpty   = !val.trim();
+			const val = translations[lang.code] || '';
+			const isEmpty = !val.trim();
 			const statusCls = isEmpty ? 'ow-field--empty' : 'ow-field--filled';
 			const statusBadge = lang.status === 'pending'
 				? ' <span class="ow-sidebar__pending">[P]</span>'
@@ -193,7 +193,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			html += `<div class="ow-sidebar__input-row">`;
 			html += `<input type="text" class="ow-sidebar__input" data-msgid="${escAttr(msgid)}" data-domain="${escAttr(domain)}" data-lang="${escAttr(lang.code)}" value="${escAttr(val)}" placeholder="…">`;
 			if (isEmpty) {
-				html += `<button class="ow-sidebar__deepl-btn" data-lang="${escAttr(lang.code)}" title="Translate with DeepL">🤖</button>`;
+				const isGoogle = cfg.provider !== 'deepl';
+				const icon = '🌐';
+				const title = isGoogle ? 'Translate with Google Free' : 'Translate with DeepL';
+				html += `<button class="ow-sidebar__at-btn" data-lang="${escAttr(lang.code)}" title="${title}">${icon}</button>`;
 			}
 			html += `</div>`;
 			html += `<span class="ow-sidebar__field-status" data-lang="${escAttr(lang.code)}"></span>`;
@@ -203,15 +206,15 @@ document.addEventListener('DOMContentLoaded', function () {
 		container.innerHTML = html;
 
 		// Bind events
-		$$('.ow-sidebar__deepl-btn', container).forEach(btn => {
-			btn.addEventListener('click', function(e) {
+		$$('.ow-sidebar__at-btn', container).forEach(btn => {
+			btn.addEventListener('click', function (e) {
 				e.stopPropagation();
-				deeplSingle(msgid, domain, btn.dataset.lang, btn, container);
+				autoTranslateSingle(msgid, domain, btn.dataset.lang, btn, container);
 			});
 		});
 
 		$$('.ow-sidebar__input', container).forEach(inp => {
-			inp.addEventListener('input', function() {
+			inp.addEventListener('input', function () {
 				inp.closest('.ow-sidebar__field').classList.add('ow-field--dirty');
 				const statusEl = $('.ow-sidebar__field-status[data-lang="' + inp.dataset.lang + '"]', container);
 				if (statusEl) {
@@ -222,12 +225,16 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 
-	// ── DeepL single translation ──────────────────────────────────────────
-	function deeplSingle(msgid, domain, langCode, btn, container) {
+	// ── Auto-translate single translation ─────────────────────────────────────────
+	function autoTranslateSingle(msgid, domain, langCode, btn, container) {
+		const isGoogle = cfg.provider !== 'deepl';
+		const icon = '🌐';
+		const action = isGoogle ? 'ow_inline_google_free_single' : 'ow_inline_deepl_single';
+
 		btn.disabled = true;
 		btn.textContent = '⏳';
 
-		ajax('ow_inline_deepl_single', { msgid, lang: langCode }).then(data => {
+		ajax(action, { msgid, lang: langCode }).then(data => {
 			const input = $('.ow-sidebar__input[data-lang="' + langCode + '"]', container);
 			if (input && data.translation) {
 				input.value = data.translation;
@@ -235,16 +242,16 @@ document.addEventListener('DOMContentLoaded', function () {
 				field.classList.remove('ow-field--empty');
 				field.classList.add('ow-field--filled', 'ow-field--dirty');
 				btn.remove();
-				
+
 				const statusEl = $('.ow-sidebar__field-status[data-lang="' + langCode + '"]', container);
 				if (statusEl) {
-					statusEl.textContent = '🤖 Draft translation ready - Click Save All';
+					statusEl.textContent = icon + ' Draft translation ready - Click Save All';
 					statusEl.style.color = 'var(--ow-teal, #0EACC5)';
 				}
 			}
 		}).catch(err => {
 			btn.disabled = false;
-			btn.textContent = '🤖';
+			btn.textContent = icon;
 			const statusEl = $('.ow-sidebar__field-status[data-lang="' + langCode + '"]', container);
 			if (statusEl) {
 				statusEl.textContent = '❌ ' + err;
@@ -253,8 +260,8 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 
-	// ── DeepL All Empty ───────────────────────────────────────────────────
-	deeplAllBtn.addEventListener('click', function () {
+	// ── Auto-Translate All Empty ──────────────────────────────────────────────────
+	atAllBtn.addEventListener('click', function () {
 		if (!activeMsgid) {
 			alert('Please select a string from the list first to translate its empty fields.');
 			return;
@@ -266,15 +273,20 @@ document.addEventListener('DOMContentLoaded', function () {
 		const emptyInputs = $$('.ow-sidebar__input', container).filter(inp => !inp.value.trim());
 		if (!emptyInputs.length) return;
 
-		deeplAllBtn.disabled = true;
-		deeplAllBtn.textContent = '⏳ Translating…';
+		atAllBtn.disabled = true;
+		atAllBtn.textContent = '⏳ Translating…';
+
+		const isGoogle = cfg.provider !== 'deepl';
+		const icon = '🌐';
+		const action = isGoogle ? 'ow_inline_google_free_single' : 'ow_inline_deepl_single';
+		const label = 'Auto-Translate All Empty';
 
 		let remaining = emptyInputs.length;
 		emptyInputs.forEach(inp => {
 			const langCode = inp.dataset.lang;
-			const btn = $('.ow-sidebar__deepl-btn[data-lang="' + langCode + '"]', container);
+			const btn = $('.ow-sidebar__at-btn[data-lang="' + langCode + '"]', container);
 
-			ajax('ow_inline_deepl_single', { msgid: activeMsgid, lang: langCode }).then(data => {
+			ajax(action, { msgid: activeMsgid, lang: langCode }).then(data => {
 				if (data.translation) {
 					inp.value = data.translation;
 					const field = inp.closest('.ow-sidebar__field');
@@ -283,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					if (btn) btn.remove();
 					const statusEl = $('.ow-sidebar__field-status[data-lang="' + langCode + '"]', container);
 					if (statusEl) {
-						statusEl.textContent = '🤖 Draft ready';
+						statusEl.textContent = icon + ' Draft ready';
 						statusEl.style.color = 'var(--ow-teal, #0EACC5)';
 					}
 				}
@@ -296,8 +308,8 @@ document.addEventListener('DOMContentLoaded', function () {
 			}).finally(() => {
 				remaining--;
 				if (remaining <= 0) {
-					deeplAllBtn.disabled = false;
-					deeplAllBtn.textContent = '🤖 DeepL All Empty';
+					atAllBtn.disabled = false;
+					atAllBtn.textContent = label;
 				}
 			});
 		});
@@ -335,20 +347,20 @@ document.addEventListener('DOMContentLoaded', function () {
 				remaining--;
 				if (remaining <= 0) {
 					saveAllBtn.disabled = false;
-					saveAllBtn.textContent = '💾 Save All';
+					saveAllBtn.textContent = 'Save All';
 				}
 			});
 		});
 	});
 
 	// ── Initialization & Events ───────────────────────────────────────────
-	
+
 	// Add class to body to push site content so sidebar doesn't overlap
 	document.body.classList.add('ow-inline-active');
-	
+
 	// Run scan
 	scanAndWrap();
-	
+
 	// Render sidebar strings list
 	renderStringList();
 
@@ -368,9 +380,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		e.stopPropagation();
 		e.stopImmediatePropagation();
 
-		const msgid  = el.dataset.owMsgid;
+		const msgid = el.dataset.owMsgid;
 		const domain = el.dataset.owDomain || 'default';
-		
+
 		activateString(msgid, domain);
 	}, true);
 

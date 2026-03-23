@@ -42,7 +42,7 @@
 }
 
 #wp-admin-bar-ow-translate-toggle.ow-ab-active .ab-item {
-	background: var(--ow-teal) !important;
+	background: #233639 !important;
 	color: #fff !important;
 }
 
@@ -55,7 +55,8 @@ body.ow-inline-active {
 /* ── Sidebar Panel ─────────────────────────────────────────── */
 .ow-sidebar {
 	position: fixed;
-	top: 32px; /* below WP admin bar */
+	top: 32px;
+	/* below WP admin bar */
 	right: 0;
 	width: 380px;
 	max-width: 90vw;
@@ -282,8 +283,8 @@ body.ow-inline-active {
 	font-weight: 600;
 }
 
-/* ── DeepL Button (per field) ──────────────────────────────── */
-.ow-sidebar__deepl-btn {
+/* ── Auto-Translate Button (per field) ──────────────────────────────── */
+.ow-sidebar__at-btn {
 	background: none;
 	border: 1px solid #dde3e8;
 	border-radius: 5px;
@@ -295,12 +296,12 @@ body.ow-inline-active {
 	line-height: 1;
 }
 
-.ow-sidebar__deepl-btn:hover {
+.ow-sidebar__at-btn:hover {
 	background: var(--ow-teal-light);
 	border-color: var(--ow-teal);
 }
 
-.ow-sidebar__deepl-btn:disabled {
+.ow-sidebar__at-btn:disabled {
 	opacity: .5;
 	cursor: wait;
 }
@@ -331,12 +332,12 @@ body.ow-inline-active {
 	cursor: wait;
 }
 
-.ow-sidebar__btn--deepl {
+.ow-sidebar__btn--at {
 	background: var(--ow-charcoal);
 	color: #fff;
 }
 
-.ow-sidebar__btn--deepl:hover {
+.ow-sidebar__btn--at:hover {
 	background: var(--ow-charcoal-soft);
 }
 
@@ -355,7 +356,7 @@ body.ow-inline-active {
 		padding-right: 0 !important;
 		padding-bottom: 50vh !important;
 	}
-	
+
 	.ow-sidebar {
 		width: 100vw;
 		top: auto;
@@ -364,6 +365,7 @@ body.ow-inline-active {
 		border-left: none;
 		border-top: 3px solid var(--ow-teal);
 	}
+
 	.ow-sidebar--minimized {
 		transform: translateY(calc(100% - 3px));
 	}

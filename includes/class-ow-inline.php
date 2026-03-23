@@ -121,10 +121,11 @@ class OW_Inline {
 			true
 		);
 		wp_localize_script( 'ow-inline-editor', 'owInline', [
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'ow_inline_editor' ),
-			'lang'    => OW_Router::get_current_lang(),
-			'source'  => OW_Languages::get_source(),
+			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
+			'nonce'    => wp_create_nonce( 'ow_inline_editor' ),
+			'lang'     => OW_Router::get_current_lang(),
+			'source'   => OW_Languages::get_source(),
+			'provider' => get_option( 'ow_at_provider', 'google_free' ),
 		] );
 	}
 
@@ -171,7 +172,7 @@ class OW_Inline {
 				<p class="ow-sidebar__loading">⏳ <?php echo  esc_html__( 'Loading strings…', 'open-world' ) ?></p>
 			</div>
 			<div class="ow-sidebar__footer" id="ow-sidebar-footer" style="display:none">
-				<button id="ow-deepl-all" class="ow-sidebar__btn ow-sidebar__btn--deepl"><?php echo  esc_html__( 'DeepL All Empty', 'open-world' ) ?></button>
+				<button id="ow-at-all" class="ow-sidebar__btn ow-sidebar__btn--at"><?php echo  esc_html__( 'Auto-Translate All Empty', 'open-world' ) ?></button>
 				<button id="ow-save-all" class="ow-sidebar__btn ow-sidebar__btn--save"><?php echo  esc_html__( 'Save All', 'open-world' ) ?></button>
 			</div>
 		</div>
@@ -260,14 +261,43 @@ class OW_Inline {
 
 		$results = OW_DeepL::translate( [ $msgid ], $source_lang, $target_lang );
 
-		if ( is_wp_error( $results ) ) {
-			wp_send_json_error( $results->get_error_message() );
+		if ( ! $results['ok'] ) {
+			wp_send_json_error( $results['error'] );
 		}
 
-		if ( empty( $results ) || ! is_array( $results ) ) {
+		if ( empty( $results['translations'] ) ) {
 			wp_send_json_error( __( 'No translation returned from DeepL.', 'open-world' ) );
 		}
 
-		wp_send_json_success( [ 'translation' => $results[0] ] );
+		wp_send_json_success( [ 'translation' => $results['translations'][0] ] );
+	}
+
+	/**
+	 * Translate a single string via Google Free for a given target language.
+	 */
+	public function ajax_google_free_single(): void {
+		check_ajax_referer( 'ow_inline_editor' );
+		if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Unauthorized' );
+
+		$msgid  = sanitize_text_field( wp_unslash( $_POST['msgid'] ?? '' ) );
+		$lang   = sanitize_key( $_POST['lang'] ?? '' );
+
+		if ( empty( $msgid ) || empty( $lang ) ) {
+			wp_send_json_error( 'Missing params' );
+		}
+
+		$source_lang = OW_Languages::get_source();
+
+		$results = OW_Google_Free::translate( [ $msgid ], $source_lang, $lang );
+
+		if ( ! $results['ok'] ) {
+			wp_send_json_error( $results['error'] );
+		}
+
+		if ( empty( $results['translations'] ) ) {
+			wp_send_json_error( __( 'No translation returned from Google Translate.', 'open-world' ) );
+		}
+
+		wp_send_json_success( [ 'translation' => $results['translations'][0] ] );
 	}
 }

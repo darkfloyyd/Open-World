@@ -136,7 +136,7 @@ class OW_Admin
 								<strong><?php echo esc_html__('Run Smart Scan', 'open-world') ?></strong>
 								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Smart Scan crawls your published pages and WooCommerce endpoints to collect the strings your visitors actually see — without importing thousands of unused strings.', 'open-world') ?></p>
 								<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>" style="display:inline;margin-top:8px">
-									<?php wp_nonce_field('ow_scan_strings', 'ow_scan_nonce_qs'); ?>
+									<?php wp_nonce_field('ow_scan_strings', 'ow_scan_nonce'); ?>
 									<input type="hidden" name="action" value="ow_scan_strings">
 									<input type="hidden" name="scan_mode" value="smart">
 									<button type="submit" class="button button-primary button-small" style="font-size:.82rem"><?php echo esc_html__('Run Smart Scan →', 'open-world') ?></button>

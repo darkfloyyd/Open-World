@@ -103,6 +103,28 @@ Each language has three statuses:
 
 ---
 
+## Screenshots
+
+### 1. Inline Editor
+![Inline Editor](screenshots/inline-editor.png)
+
+### 2. Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### 3. Translations
+![Translations](screenshots/translations.png)
+
+### 4. Languages Management
+![Languages](screenshots/languages.png)
+
+### 5. Auto-Translate
+![Auto-Translate](screenshots/auto-translate.png)
+
+### 6. Settings
+![Settings](screenshots/settings.png)
+
+---
+
 ## Contributing
 
 Open World is 100% open source (GPL-2.0+). Pull Requests are welcome for:
@@ -119,7 +141,7 @@ Please open an issue first for larger features.
 ## Requirements
 
 - WordPress 6.0+
-- PHP 8.1
+- PHP 7.4
 - WooCommerce 7.0+ *(optional, for WooCommerce features)*
 
 ---
