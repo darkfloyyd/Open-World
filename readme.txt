@@ -3,8 +3,8 @@ Contributors: jakubmisiak
 Tags: multilingual, translation, woocommerce, deepl, language switcher
 Requires at least: 6.0
 Tested up to: 6.9
-Requires PHP: 7.4
-Stable tag: 1.0.2
+Requires PHP: 8.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,7 @@ Open World gives you full control over your website translations — built entir
 * 🌐 **Hreflang & SEO-Friendly URLs** — Built-in language switchers, hreflang tags, and clean URL endpoints (e.g. `domain.com/es/`, `domain.com/pl/`).
 * 🛡️ **SEO Plugin Integrations** — Translates titles, meta descriptions, Open Graph tags, Twitter Cards, and JSON-LD structured data for **Yoast SEO**, **Rank Math**, **All in One SEO**, and **SEOPress**. No extra setup required.
 * 🔄 **Language Statuses** — Set each language as Active (public), Pending (admin-only preview), or Inactive (hidden).
+* ⚙️ **Link Exclusions** — Exclude specific URLs or structural paths from being language-routed via an easy Settings panel.
 * 📄 **PO Export** — Export translations as standard `.po` files at any time.
 * 🔢 **Plural Forms** — Full plural rules for Polish, Russian, Arabic, Czech, Slovak, and 20+ other languages.
 
@@ -83,20 +84,3 @@ Open World is 100% free with no premium tiers, stores translations in a single e
 = What languages are supported? =
 
 Any language can be added. Built-in plural rules are included for: English, German, French, Spanish, Italian, Polish, Russian, Ukrainian, Czech, Slovak, Arabic, Chinese, Japanese, Korean, Dutch, Portuguese (PT and BR), Swedish, Danish, Finnish, Norwegian, Turkish, Hungarian, and Romanian.
-
-== Screenshots ==
-
-1. Languages management screen — add and manage your target languages with status control.
-2. Translation editor — paginated view with search, filter by source, and inline editing.
-3. Inline frontend editor — translate any string by clicking it directly on the page.
-4. WooCommerce product screen — per-language tabs for title, short description, and full description.
-5. Settings screen — DeepL API configuration, Smart Scan, and usage statistics.
-
-== Changelog ==
-
-= 1.0.0 =
-* Initial public release!
-* Complete multilingual solution featuring Universal URL Routing for native permalink support across all post types.
-* Deeply integrated WooCommerce support (products, checkout, emails).
-* Robust Auto-Translate engine with DeepL and Google APIs featuring automatic network retry resiliency.
-* Natively intercepts and translates metadata from Yoast SEO, Rank Math, AIOSEO, and SEOPress.

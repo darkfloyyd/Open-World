@@ -233,6 +233,23 @@ class OW_Router {
 		add_filter( 'page_link',      [ $this, 'filter_url' ], 10, 1 );
 		add_filter( 'post_type_link', [ $this, 'filter_url' ], 10, 1 );
 		add_filter( 'term_link',      [ $this, 'filter_url' ], 10, 1 );
+		add_filter( 'wp_nav_menu_objects', [ $this, 'filter_nav_menu_items' ], 10, 1 );
+		add_filter( 'render_block',        [ $this, 'filter_url' ], 10, 1 );
+		add_filter( 'widget_text_content', [ $this, 'filter_url' ], 10, 1 );
+	}
+
+	public function filter_nav_menu_items( $items ) {
+		if ( ! is_array( $items ) && ! is_object( $items ) ) {
+			return $items;
+		}
+
+		foreach ( $items as $item ) {
+			if ( isset( $item->url ) ) {
+				$item->url = $this->filter_url( $item->url );
+			}
+		}
+
+		return $items;
 	}
 
 	public function filter_url( $url ) {
@@ -327,6 +344,160 @@ class OW_Router {
 		printf(
 			'<link rel="alternate" hreflang="x-default" href="%s">' . "\n",
 			esc_url( self::get_lang_url( $default, $current_url ) )
+		);
+	}
+
+	// ── Output HTML Rewriter ──────────────────────────────────────────────────
+
+	public function register_output_rewriter(): void {
+		add_action( 'template_redirect', function() {
+			if ( is_admin() || wp_doing_ajax() || wp_is_json_request() || wp_doing_cron() || is_customize_preview() ) {
+				return;
+			}
+
+			ob_start( function( $html ) {
+				$lang    = OW_Router::get_current_lang();
+				$default = OW_Languages::get_default();
+
+				if ( $lang === $default || empty( $html ) ) {
+					return $html;
+				}
+
+				$home = get_option( 'home' );
+				if ( ! $home ) {
+					return $html;
+				}
+
+				return OW_Router::rewrite_html_links( $html, $lang, $home );
+			} );
+		}, 1 );
+	}
+
+	/**
+	 * Scans HTML for <a> links and applies the language prefix natively using robust regex parsing.
+	 * Evaluates `href` attributes regardless of placement within the <a> tag.
+	 */
+	public static function rewrite_html_links( string $html, string $lang, string $home ): string {
+		$home_origin = rtrim( $home, '/' );
+
+		// Pre-fetch exclusions to avoid querying the DB for every single link matched
+		$raw_exclusions = get_option( 'ow_rewrite_exclusions', '' );
+		$exclusions     = ! empty( $raw_exclusions ) ? array_filter( array_map( 'trim', explode( "\n", $raw_exclusions ) ) ) : [];
+
+		return preg_replace_callback(
+			'~<a\b(\s[^>]*)>~i',
+			function( $tag_match ) use ( $lang, $home_origin, $exclusions ) {
+				$attrs = $tag_match[1];
+
+				if ( ! preg_match( '~\bhref=(["\'])([^"\']*)\1~i', $attrs, $href_match ) ) {
+					return $tag_match[0];
+				}
+
+				$quote = $href_match[1];
+				$href  = $href_match[2];
+
+				// ── Skip conditions ──
+
+				// 0. Explicit opt-out via data attribute (e.g. language switcher)
+				if ( str_contains( $attrs, 'data-no-rewrite' ) ) {
+					return $tag_match[0];
+				}
+
+				// 1. Empty or anchor-only
+				if ( empty( $href ) || $href === '#' || str_starts_with( $href, '#' ) ) {
+					return $tag_match[0];
+				}
+
+				// 2. Non-HTTP schemes
+				if ( preg_match( '~^(mailto|tel|fax|javascript|data):~i', $href ) ) {
+					return $tag_match[0];
+				}
+
+				// 3. Protocol-relative (known limitation — skip safely)
+				if ( str_starts_with( $href, '//' ) ) {
+					return $tag_match[0];
+				}
+
+				// 4. External URL (different origin) - protocol agnostic
+				if ( str_starts_with( $href, 'http' ) ) {
+					$href_host = wp_parse_url( $href, PHP_URL_HOST );
+					$home_host = wp_parse_url( $home_origin, PHP_URL_HOST );
+					if ( $href_host && $home_host && $href_host !== $home_host ) {
+						return $tag_match[0];
+					}
+				}
+
+				// 5. Normalise to path-only for remaining checks
+				$path = str_starts_with( $href, 'http' )
+					? wp_parse_url( $href, PHP_URL_PATH )
+					: $href;
+				$path = ltrim( $path ?? '', '/' );
+
+				// 5.5 User-defined Exclusions
+				foreach ( $exclusions as $rule ) {
+					$rule_is_path    = str_starts_with( $rule, '/' );
+					$rule_is_url     = str_starts_with( $rule, 'http' );
+					$normalized_path = '/' . ltrim( $path, '/' );
+					
+					if ( 
+						$href === $rule || 
+						( $rule_is_path && ( $normalized_path === $rule || str_starts_with( $normalized_path, rtrim( $rule, '/' ) . '/' ) ) ) || 
+						( $rule_is_url && ( $href === $rule || str_starts_with( $href, rtrim( $rule, '/' ) . '/' ) ) ) 
+					) {
+						return $tag_match[0];
+					}
+				}
+
+				// 6. WP core / system paths
+				if ( preg_match( '~^wp-(admin|content|includes|json|login\.php|register\.php|cron\.php|activate\.php|signup\.php)~i', $path ) ) {
+					return $tag_match[0];
+				}
+
+				// 7. Feed and sitemap
+				if ( preg_match( '~^(feed|sitemap|sitemap_index|rss|atom|xmlrpc\.php)~i', $path ) ) {
+					return $tag_match[0];
+				}
+
+				// 8. WooCommerce AJAX
+				if ( str_contains( $href, 'wc-ajax=' ) ) {
+					return $tag_match[0];
+				}
+
+				// 9. Already has a valid lang prefix — check all active lang codes
+				$first_segment = explode( '/', $path )[0] ?? '';
+				if ( OW_Languages::is_valid( $first_segment ) ) {
+					return $tag_match[0];
+				}
+
+				// ── Build new href ──
+				if ( str_starts_with( $href, 'http' ) ) {
+					// Absolute internal: reconstruct URL with lang pushed into the path
+					$parsed = wp_parse_url( $href );
+					$scheme = isset( $parsed['scheme'] ) ? $parsed['scheme'] . '://' : '//';
+					$host   = $parsed['host'] ?? '';
+					$port   = isset( $parsed['port'] ) ? ':' . $parsed['port'] : '';
+					$new_href = $scheme . $host . $port . '/' . $lang . '/' . $path;
+					if ( isset( $parsed['query'] ) ) {
+						$new_href .= '?' . $parsed['query'];
+					}
+					if ( isset( $parsed['fragment'] ) ) {
+						$new_href .= '#' . $parsed['fragment'];
+					}
+				} else {
+					// Relative: prepend /lang/
+					$new_href = '/' . $lang . '/' . ltrim( $href, '/' );
+				}
+
+				$new_attrs = preg_replace(
+					'~\bhref=(["\'])[^"\']*\1~i',
+					'href=' . $quote . $new_href . $quote,
+					$attrs,
+					1
+				);
+
+				return '<a' . $new_attrs . '>';
+			},
+			$html
 		);
 	}
 }

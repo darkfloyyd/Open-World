@@ -39,7 +39,7 @@ class OW_Switcher {
 					<?php foreach ( $all as $lang => $row ): ?>
 					<?php if ( $lang === $current ) continue; ?>
 					<li role="none">
-						<a role="menuitem" href="<?php echo  esc_url( OW_Router::get_lang_url( $lang ) ) ?>" hreflang="<?php echo  esc_attr( str_replace( '_', '-', $row['locale'] ) ) ?>">
+						<a role="menuitem" data-no-rewrite="1" href="<?php echo  esc_url( OW_Router::get_lang_url( $lang ) ) ?>" hreflang="<?php echo  esc_attr( str_replace( '_', '-', $row['locale'] ) ) ?>">
 							<?php if ( $show_flag ) echo esc_html( $row['flag'] ?? '' ) . ' '; ?>
 							<?php if ( $show_name ) echo esc_html( $row['name'] ); else echo esc_html( strtoupper( $lang ) ); ?>
 						</a>
@@ -57,7 +57,7 @@ class OW_Switcher {
 			foreach ( $all as $lang => $row ) {
 				$active = $lang === $current ? ' ow-switcher__link--active' : '';
 				printf(
-					'<a class="ow-switcher__link%s" href="%s" hreflang="%s" title="%s">%s</a>',
+					'<a class="ow-switcher__link%s" data-no-rewrite="1" href="%s" hreflang="%s" title="%s">%s</a>',
 					esc_attr( $active ),
 					esc_url( OW_Router::get_lang_url( $lang ) ),
 					esc_attr( str_replace( '_', '-', $row['locale'] ) ),
@@ -77,7 +77,7 @@ class OW_Switcher {
 			foreach ( $all as $lang => $row ) {
 				$active = $lang === $current ? ' ow-switcher__link--active' : '';
 				printf(
-					'<a class="ow-switcher__link%s" href="%s" hreflang="%s" title="%s">%s%s</a>',
+					'<a class="ow-switcher__link%s" data-no-rewrite="1" href="%s" hreflang="%s" title="%s">%s%s</a>',
 					esc_attr( $active ),
 					esc_url( OW_Router::get_lang_url( $lang ) ),
 					esc_attr( str_replace( '_', '-', $row['locale'] ) ),

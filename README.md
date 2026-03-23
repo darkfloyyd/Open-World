@@ -1,4 +1,4 @@
-# Open World Multilingual 🌍
+# Open World
 
 > **The first complete, free, and open-source multilingual plugin for WordPress and WooCommerce.**
 
@@ -20,6 +20,7 @@ Open World gives you full control over your website translations — no premium 
 | **PO/POT Export** | Export translations as standard `.po` files for backup or use in other tools. |
 | **Plural Forms** | Full plural rules for Polish, Russian, Arabic, Czech, and 20+ other languages. |
 | **SEO Plugin Integrations** | Translates SEO titles, meta descriptions, OG tags, Twitter Cards, and JSON-LD schema for **Yoast**, **Rank Math**, **AIOSEO**, and **SEOPress**. |
+| **Link Exclusions** | Easily exclude specific URLs or technical paths from being rewritten via the Settings panel. |
 
 ---
 
@@ -28,8 +29,7 @@ Open World gives you full control over your website translations — no premium 
 1. **Install and activate** the plugin.
 2. Go to **Open World → Languages** and add your target languages (e.g. Polish, Spanish).
 3. Navigate to **Settings** and click **Smart Scan** — it will crawl your live pages and collect only the strings your site actually uses.
-4. Go to **Translations**, pick a language, and start translating.
-5. Go to **Translations**, pick a language, and manually translate, or click **Auto-Translate** to automatically translate everything using Google Free or DeepL.
+4. Go to **Translations**, pick a language, and manually translate, or click **Auto-Translate** to automatically translate everything using Google Free or DeepL.
 
 ---
 
@@ -119,9 +119,8 @@ Please open an issue first for larger features.
 ## Requirements
 
 - WordPress 6.0+
-- PHP 8.0+
+- PHP 8.1
 - WooCommerce 7.0+ *(optional, for WooCommerce features)*
-- Google Translate (built-in) or DeepL API key *(optional, for premium engines)*
 
 ---
 
