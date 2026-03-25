@@ -4,7 +4,7 @@
  * Plugin Name:       Open World
  * Plugin URI:        https://github.com/darkfloyyd/open-world
  * Description:       Complete multilingual solution — dynamic strings, WooCommerce integration, URL-based language switcher for free.
- * Version:           1.1.1
+ * Version:           1.1.2
  * Tested up to:      6.9
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-define('OW_VERSION', '1.1.1');
+define('OW_VERSION', '1.1.2');
 define('OW_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('OW_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('OW_PLUGIN_FILE', __FILE__);
@@ -57,7 +57,10 @@ add_action('plugins_loaded', function (): void {
 	$router->register_output_rewriter();
 	add_action('init', [$router, 'setup_rewrite_rules'], 5);
 	add_filter('request', [$router, 'filter_request']);
-	add_action('template_redirect', [$router, 'redirect_if_needed'], 3);
+	// Browser language auto-detect + cookie preference (priority 1, frontend only).
+	if ( ! is_admin() && ! wp_doing_ajax() && ! defined( 'REST_REQUEST' ) && ! defined( 'WP_CLI' ) ) {
+		add_action( 'template_redirect', [ 'OW_Router', 'maybe_auto_redirect' ], 1 );
+	}
 	add_action('wp_head', [$router, 'add_hreflang_tags']);
 
 	OW_Switcher::register();
@@ -98,6 +101,7 @@ add_action('plugins_loaded', function (): void {
 		add_action('admin_post_ow_export_po', [$admin, 'handle_export_po']);
 		add_action('admin_post_ow_save_scanner_settings', [$admin, 'handle_save_scanner_settings']);
 		add_action('admin_post_ow_save_rewrite_settings', [$admin, 'handle_save_rewrite_settings']);
+		add_action('admin_post_ow_save_browser_detect_settings', [$admin, 'handle_save_browser_detect_settings']);
 		add_action('wp_ajax_ow_save_translation', [$admin, 'ajax_save_translation']);
 		add_action('wp_ajax_ow_set_lang_status', [$admin, 'ajax_set_lang_status']);
 		add_action('wp_ajax_ow_deepl_save_settings', [$admin, 'ajax_deepl_save_settings']);

@@ -1095,7 +1095,7 @@ class OW_Admin
 					</form>
 				</div>
 
-				<div class="ow-settings-card" style="grid-column: span 2;">
+				<div class="ow-settings-card">
 					<h2><?php echo esc_html__('Language Switcher Shortcodes', 'open-world') ?></h2>
 					<p class="description"><?php echo esc_html__('Copy a shortcode below and paste it into any page, post, or widget to display a language switcher.', 'open-world') ?></p>
 					<table class="widefat" style="margin-top:10px">
@@ -1108,6 +1108,20 @@ class OW_Admin
 						</tbody>
 					</table>
 					<p class="description" style="margin-top:8px"><?php echo esc_html__('To place the switcher, use one of the shortcodes above, or add the "Language Switcher" widget in Appearance → Widgets. The switcher is never injected automatically — you decide where it appears.', 'open-world') ?></p>
+				</div>
+
+				<div class="ow-settings-card">
+					<h2><?php echo esc_html__( 'Browser Language Detection', 'open-world' ) ?></h2>
+					<p class="description"><?php echo esc_html__( 'Automatically detects the visitor\'s preferred language from their browser on first visit and redirects them to the matching language version. After the first visit, the preference is remembered via a cookie (ow_lang_pref) for one year. If the visitor manually switches language, the cookie is updated to reflect their choice.', 'open-world' ) ?></p>
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ) ?>" style="margin-top:12px">
+						<?php wp_nonce_field( 'ow_save_browser_detect_settings', 'ow_browser_detect_nonce' ); ?>
+						<input type="hidden" name="action" value="ow_save_browser_detect_settings">
+						<label>
+							<input type="checkbox" name="ow_browser_detect_enabled" value="1" <?php checked( (int) get_option( 'ow_browser_detect_enabled', 1 ), 1 ) ?>>
+							<strong><?php echo esc_html__( 'Enable browser language auto-detection', 'open-world' ) ?></strong>
+						</label>
+						<button type="submit" class="button" style="margin-top:12px; display:block"><?php echo esc_html__( 'Save', 'open-world' ) ?></button>
+					</form>
 				</div>
 
 				<div class="ow-settings-card" style="grid-column: span 2;">
@@ -1533,6 +1547,20 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 
 		set_transient('ow_last_scan_result', __('Link rewriting exclusions saved.', 'open-world'), 60);
 		wp_safe_redirect(admin_url('admin.php?page=ow-settings'));
+		exit;
+	}
+
+	public function handle_save_browser_detect_settings(): void
+	{
+		check_admin_referer( 'ow_save_browser_detect_settings', 'ow_browser_detect_nonce' );
+		if ( ! current_user_can( 'manage_options' ) )
+			wp_die( 'Unauthorized' );
+
+		$enabled = ! empty( $_POST['ow_browser_detect_enabled'] ) ? 1 : 0;
+		update_option( 'ow_browser_detect_enabled', $enabled );
+
+		set_transient( 'ow_last_scan_result', __( 'Browser language detection settings saved.', 'open-world' ), 60 );
+		wp_safe_redirect( admin_url( 'admin.php?page=ow-settings' ) );
 		exit;
 	}
 

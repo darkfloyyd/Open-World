@@ -3,13 +3,15 @@
  * Open World — URL Router + Language Detection
  *
  * URL Schema: /{lang_code}/{slug} — default lang has no prefix (stays at /)
- * Detection: URL prefix > Cookie > Accept-Language header > default lang
+ * Detection priority: ow_lang_pref cookie > URL prefix > Accept-Language header > default lang
  *
  * Routing strategy:
  *  - We add rewrite rules so /pl/ and /pl/some-page/ are recognised by WP.
  *  - The ow_lang query var is stored and used by OW_Engine to pick translations.
  *  - We hook `parse_request` to strip the lang prefix before WP matches pages,
  *    so WP sees the normal slug and serves the right content.
+ *  - maybe_auto_redirect() runs at template_redirect priority 1 (before everything
+ *    else) to detect and redirect first-time visitors to their preferred language.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -37,7 +39,7 @@ class OW_Router {
 		}
 
 		// No URL prefix → always the default language.
-		// The cookie is only used by redirect_if_needed() for auto-redirect on first visit.
+		// The cookie (ow_lang_pref) is read by maybe_auto_redirect() for first-visit detection.
 		self::$current_lang = OW_Languages::get_default();
 		return self::$current_lang;
 	}
@@ -162,68 +164,189 @@ class OW_Router {
 		return $query_vars;
 	}
 
-	// ── Redirect on first visit ───────────────────────────────────────────────
+	// ── Cookie helper ─────────────────────────────────────────────────────────
 
-	public function redirect_if_needed(): void {
-		if ( is_admin() ) return;
+	/**
+	 * Set (or refresh) the ow_lang_pref cookie.
+	 *
+	 * Public and static so it can be called from outside the class if needed.
+	 * Uses the modern setcookie() options-array form for SameSite support.
+	 *
+	 * @param string $lang A valid language code, e.g. 'pl', 'en'.
+	 */
+	public static function set_lang_cookie( string $lang ): void {
+		$current = isset( $_COOKIE['ow_lang_pref'] ) ? sanitize_key( wp_unslash( $_COOKIE['ow_lang_pref'] ) ) : '';
+		if ( $current === $lang ) {
+			return; // Already correct — avoid redundant Set-Cookie header.
+		}
+		setcookie( // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
+			'ow_lang_pref',
+			$lang,
+			[
+				'expires'  => time() + YEAR_IN_SECONDS,
+				'path'     => '/',
+				'secure'   => is_ssl(),
+				'httponly' => true,
+				'samesite' => 'Lax',
+			]
+		);
+	}
 
-		$request = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
+	// ── Accept-Language parser ────────────────────────────────────────────────
+
+	/**
+	 * Parse HTTP_ACCEPT_LANGUAGE into an ordered list of short language codes.
+	 *
+	 * Example input:  "pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7"
+	 * Example output: ['pl', 'en']   (deduped, short codes, highest-q first)
+	 *
+	 * @return string[] Ordered array of lowercase 2-3 letter language codes.
+	 */
+	private static function parse_accept_language(): array {
+		try {
+			$header = isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] )
+				? sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) )
+				: '';
+
+			if ( empty( $header ) ) {
+				return [];
+			}
+
+			$weighted = [];
+			$parts    = explode( ',', $header );
+
+			foreach ( $parts as $part ) {
+				$part = trim( $part );
+				if ( empty( $part ) ) {
+					continue;
+				}
+
+				// Split tag and optional q-value: e.g. "pl-PL;q=0.9"
+				$segments = explode( ';', $part );
+				$tag      = strtolower( trim( $segments[0] ) );
+				$q        = 1.0;
+
+				foreach ( array_slice( $segments, 1 ) as $param ) {
+					$param = trim( $param );
+					if ( strncasecmp( $param, 'q=', 2 ) === 0 ) {
+						$q = (float) substr( $param, 2 );
+					}
+				}
+
+				// Strip country subtag: "pl-pl" → "pl", "en-us" → "en"
+				$hyphen = strpos( $tag, '-' );
+				$code   = $hyphen !== false ? substr( $tag, 0, $hyphen ) : $tag;
+
+				// Keep the highest q-value seen for each code.
+				if ( ! isset( $weighted[ $code ] ) || $q > $weighted[ $code ] ) {
+					$weighted[ $code ] = $q;
+				}
+			}
+
+			arsort( $weighted );
+			return array_keys( $weighted );
+
+		} catch ( \Throwable $e ) {
+			return [];
+		}
+	}
+
+	// ── Browser auto-redirect ─────────────────────────────────────────────────
+
+	/**
+	 * Detect the visitor's preferred language and redirect if needed.
+	 *
+	 * Called on `template_redirect` at priority 1 (frontend only).
+	 *
+	 * Detection priority:
+	 *   1. Cookie ow_lang_pref exists and is an active language  → honour it, no redirect.
+	 *      If the URL also has a lang prefix that differs from the cookie, the URL wins
+	 *      and the cookie is updated (manual URL navigation overrides saved preference).
+	 *   2. URL already has a lang prefix (no valid cookie)        → set cookie, no redirect.
+	 *   3. First visit — parse Accept-Language header:
+	 *      a. Match against active languages (get_public()).
+	 *      b. If match ≠ default → set cookie → redirect to /{lang}/ equivalent.
+	 *      c. No match or match = default → set cookie to default, stay.
+	 *
+	 * Filters:
+	 *   ow_browser_detect_enabled       — bool, override the settings toggle.
+	 *   ow_browser_detect_redirect_url  — string $url, string $lang — customise target.
+	 */
+	public static function maybe_auto_redirect(): void {
+
+		// ── Feature flag ────────────────────────────────────────────────────
+		$enabled = (bool) get_option( 'ow_browser_detect_enabled', 1 );
+		$enabled = (bool) apply_filters( 'ow_browser_detect_enabled', $enabled );
+		if ( ! $enabled ) {
+			return;
+		}
+
 		$default = OW_Languages::get_default();
+		$public  = OW_Languages::get_public(); // active languages only
 
-		// Already on a language-prefixed URL — check status then set cookie
+		// Determine whether the current URL already contains a lang prefix.
+		$request  = isset( $_SERVER['REQUEST_URI'] )
+			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+			: '/';
 		$path     = trim( wp_parse_url( $request, PHP_URL_PATH ), '/' );
 		$segments = explode( '/', $path );
 		$first    = strtolower( $segments[0] ?? '' );
-		if ( $first && OW_Languages::is_valid( $first ) ) {
-			$status = OW_Languages::get_status( $first );
 
-			// inactive → redirect everyone (even admins) to default
-			if ( $status === OW_Languages::STATUS_INACTIVE ) {
-				$this->set_lang_cookie( $default );
-				wp_safe_redirect( home_url( '/' ), 302 );
-				exit;
-			}
+		$has_url_lang = $first && isset( $public[ $first ] );
 
-			// pending → accessible only to admins
-			if ( $status === OW_Languages::STATUS_PENDING && ! current_user_can( 'manage_options' ) ) {
-				$this->set_lang_cookie( $default );
-				wp_safe_redirect( home_url( '/' ), 302 );
-				exit;
-			}
+		// ── 1. Cookie exists and holds a valid active language ───────────────
+		$cookie_lang = isset( $_COOKIE['ow_lang_pref'] )
+			? sanitize_key( wp_unslash( $_COOKIE['ow_lang_pref'] ) )
+			: '';
 
-			$this->set_lang_cookie( $first );
-			return;
-		}
-
-		// On root / (default language territory) — always reset cookie to default.
-		// Clears any stale cookie left from a previous non-default language visit.
-		$cookie_lang = isset( $_COOKIE['ow_lang'] ) ? sanitize_key( wp_unslash( $_COOKIE['ow_lang'] ) ) : '';
-		if ( ! empty( $cookie_lang ) ) {
-			if ( $cookie_lang !== $default ) {
-				$this->set_lang_cookie( $default );
+		if ( $cookie_lang && isset( $public[ $cookie_lang ] ) ) {
+			// If the URL contains a different lang prefix the visitor navigated
+			// there manually — update the cookie to match the URL.
+			if ( $has_url_lang && $first !== $cookie_lang ) {
+				self::set_lang_cookie( $first );
 			}
 			return;
 		}
 
-		// No cookie at all — first visit. Detect preferred language and auto-redirect.
-		$accept_lang = isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) : '';
-		$detected    = ! empty( $accept_lang ) ? self::detect_from_header( $accept_lang ) : $default;
+		// ── 2. URL already has a lang prefix (no valid cookie yet) ───────────
+		if ( $has_url_lang ) {
+			self::set_lang_cookie( $first );
+			return;
+		}
 
-		$this->set_lang_cookie( $detected );
+		// ── 3. First visit: detect from Accept-Language header ───────────────
+		$candidates = self::parse_accept_language();
+		$detected   = $default; // Safe fallback.
+
+		foreach ( $candidates as $code ) {
+			if ( isset( $public[ $code ] ) ) {
+				$detected = $code;
+				break;
+			}
+		}
+
+		self::set_lang_cookie( $detected );
 
 		if ( $detected === $default ) {
+			return; // Visitor stays on default lang — no redirect needed.
+		}
+
+		// Build the target URL: insert /{lang}/ immediately after the domain.
+		$path_only  = wp_parse_url( $request, PHP_URL_PATH ) ?? '/';
+		$target_url = home_url( '/' . $detected . '/' . ltrim( $path_only, '/' ) );
+
+		/** This filter lets developers customise (or cancel) the redirect URL. */
+		$target_url = (string) apply_filters( 'ow_browser_detect_redirect_url', $target_url, $detected );
+
+		// Guard: never redirect if the computed target equals the current URL
+		// (prevents infinite loops on edge cases).
+		$current_url = home_url( $request );
+		if ( rtrim( $target_url, '/' ) === rtrim( $current_url, '/' ) ) {
 			return;
 		}
 
-		wp_safe_redirect( home_url( '/' . $detected . '/' ), 302 );
+		wp_redirect( $target_url, 302 ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 		exit;
-	}
-
-	private function set_lang_cookie( string $lang ): void {
-		$cookie_lang = isset( $_COOKIE['ow_lang'] ) ? sanitize_key( wp_unslash( $_COOKIE['ow_lang'] ) ) : '';
-		if ( $cookie_lang !== $lang ) {
-			setcookie( 'ow_lang', $lang, time() + 30 * DAY_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
-		}
 	}
 	// ── Dynamic Link Filtering ────────────────────────────────────────────────
 

@@ -14,6 +14,7 @@ Open World gives you full control over your website translations — no premium 
 | **Auto-Translate** | Bulk-translate your entire store via Google Translate Free (built-in) or the DeepL API. |
 | **Smart Scanner** | Crawls your live frontend and captures only strings actually rendered — skip lots of unused strings. |
 | **Inline Editor** | Translate strings visually while browsing your site. Click any text in the sidebar to jump straight to it. |
+| **Browser Language Detection** | Detects the visitor's preferred language from the `Accept-Language` header on first visit and redirects them automatically. Preference is remembered via the `ow_lang_pref` cookie for one year. Can be disabled in Settings. |
 | **Full WooCommerce Support** | Translates product titles, descriptions, categories, checkout fields, and order emails. |
 | **Hreflang & SEO** | Built-in language switchers, hreflang tags, and clean URL endpoints (`/es/`, `/pl/`, etc.). |
 | **Language Statuses** | Set languages as `active` (public), `pending` (admin-only preview), or `inactive` (hidden). |
