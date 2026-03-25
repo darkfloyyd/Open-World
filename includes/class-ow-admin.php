@@ -1010,41 +1010,73 @@ class OW_Admin
 					</form>
 					<hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
 					<p class="description" style="color:#d63638"><?php echo esc_html__('Warning: This will permanently delete ALL strings from the database, both translated and untranslated.', 'open-world') ?></p>
-					<button type="button" class="button button-link-delete" id="ow-delete-all-btn" style="margin-top:8px"><?php echo esc_html__('Delete ALL translations', 'open-world') ?></button>
-					<script>
-					document.getElementById('ow-delete-all-btn').addEventListener('click', async function() {
-						const typed = prompt('<?php echo esc_js(__('Type exactly: I understand what I am doing right now', 'open-world')) ?>');
-						if (typed === 'I understand what I am doing right now') {
-							const secondConfirm = confirm('<?php echo esc_js(__('Are you sure?', 'open-world')) ?>');
-							if (secondConfirm) {
-								const body = new URLSearchParams({
-									action: 'ow_delete_all_translations',
-									_ajax_nonce: '<?php echo esc_js(wp_create_nonce('ow_delete_all_translations')) ?>'
-								});
-								document.getElementById('ow-delete-all-btn').disabled = true;
-								document.getElementById('ow-delete-all-btn').textContent = '<?php echo esc_js(__('Deleting...', 'open-world')) ?>';
-								try {
-									const r = await fetch(ajaxurl, { method: 'POST', credentials: 'same-origin', body });
-									const d = await r.json();
-									if(d.success) {
-										alert('<?php echo esc_js(__('All translations deleted successfully.', 'open-world')) ?>');
-										location.reload();
-									} else {
-										alert('Error: ' + (d.data || 'Unknown error'));
-										document.getElementById('ow-delete-all-btn').disabled = false;
-										document.getElementById('ow-delete-all-btn').textContent = '<?php echo esc_js(__('Delete ALL translations', 'open-world')) ?>';
-									}
-								} catch (e) {
-									alert('Network error');
-									document.getElementById('ow-delete-all-btn').disabled = false;
-									document.getElementById('ow-delete-all-btn').textContent = '<?php echo esc_js(__('Delete ALL translations', 'open-world')) ?>';
-								}
+									<button type="button" class="button button-link-delete" id="ow-delete-all-btn" style="margin-top:8px"><?php echo esc_html__('Delete ALL translations', 'open-world') ?></button>
+				<div id="ow-delete-confirm" style="display:none;margin-top:10px;padding:12px;background:#fff8f8;border:1px solid #f5c6cb;border-radius:4px;">
+					<p style="margin:0 0 8px;font-size:.9em"><?php echo esc_html__('Type DELETE to confirm:', 'open-world') ?></p>
+					<input type="text" id="ow-delete-confirm-input" style="width:180px;margin-right:6px" placeholder="DELETE">
+					<button type="button" class="button button-link-delete" id="ow-delete-confirm-btn"><?php echo esc_html__('Confirm', 'open-world') ?></button>
+					<button type="button" class="button" id="ow-delete-cancel-btn"><?php echo esc_html__('Cancel', 'open-world') ?></button>
+					<p id="ow-delete-error" style="color:#d63638;margin:6px 0 0;font-size:.85em;display:none"></p>
+				</div>
+				<script>
+				(function() {
+					const btn     = document.getElementById('ow-delete-all-btn');
+					const wrap    = document.getElementById('ow-delete-confirm');
+					const input   = document.getElementById('ow-delete-confirm-input');
+					const confirm = document.getElementById('ow-delete-confirm-btn');
+					const cancel  = document.getElementById('ow-delete-cancel-btn');
+					const error   = document.getElementById('ow-delete-error');
+					const nonce   = '<?php echo esc_js(wp_create_nonce('ow_delete_all_translations')) ?>';
+
+					btn.addEventListener('click', function() {
+						wrap.style.display = 'block';
+						input.value = '';
+						error.style.display = 'none';
+						input.focus();
+					});
+
+					cancel.addEventListener('click', function() {
+						wrap.style.display = 'none';
+					});
+
+					confirm.addEventListener('click', async function() {
+						if (input.value.trim() !== 'DELETE') {
+							error.textContent = '<?php echo esc_js(__('Type DELETE (uppercase) to confirm.', 'open-world')) ?>';
+							error.style.display = 'block';
+							input.focus();
+							return;
+						}
+						confirm.disabled = true;
+						btn.disabled = true;
+						confirm.textContent = '<?php echo esc_js(__('Deleting...', 'open-world')) ?>';
+						error.style.display = 'none';
+						try {
+							const body = new URLSearchParams({
+								action: 'ow_delete_all_translations',
+								_ajax_nonce: nonce
+							});
+							const r = await fetch(ajaxurl, { method: 'POST', credentials: 'same-origin', body });
+							const d = await r.json();
+							if (d.success) {
+								location.reload();
+							} else {
+								error.textContent = 'Error: ' + (d.data || 'Unknown error');
+								error.style.display = 'block';
+								confirm.disabled = false;
+								btn.disabled = false;
+								confirm.textContent = '<?php echo esc_js(__('Confirm', 'open-world')) ?>';
 							}
-						} else if (typed !== null) {
-							alert('<?php echo esc_js(__('Incorrect text provided. Aborted.', 'open-world')) ?>');
+						} catch (e) {
+							error.textContent = '<?php echo esc_js(__('Network error. Try again.', 'open-world')) ?>';
+							error.style.display = 'block';
+							confirm.disabled = false;
+							btn.disabled = false;
+							confirm.textContent = '<?php echo esc_js(__('Confirm', 'open-world')) ?>';
 						}
 					});
-					</script>
+				})();
+				</script>
+
 				</div>
 
 				<div class="ow-settings-card">
