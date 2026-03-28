@@ -13,7 +13,7 @@ Open World gives you full control over your website translations — no premium 
 | **Zero DB Overhead** | Uses WordPress native text domains. No extra columns, no schema changes. |
 | **Auto-Translate** | Bulk-translate your entire store via Google Translate Free (built-in) or the DeepL API. |
 | **Smart Scanner** | Crawls your live frontend and captures only strings actually rendered — skip lots of unused strings. |
-| **Inline Editor** | Translate strings visually while browsing your site. Click any text in the sidebar to jump straight to it. |
+| **Inline Editor** | Translate strings visually while browsing your site. Real-time sidebar search, and instant click-to-select element highlighting. |
 | **Browser Language Detection** | Detects the visitor's preferred language from the `Accept-Language` header on first visit and redirects them automatically. Preference is remembered via the `ow_lang_pref` cookie for one year. Can be disabled in Settings. |
 | **Full WooCommerce Support** | Translates product titles, descriptions, categories, checkout fields, and order emails. |
 | **Hreflang & SEO** | Built-in language switchers, hreflang tags, and clean URL endpoints (`/es/`, `/pl/`, etc.). |
@@ -40,7 +40,8 @@ Translate directly while browsing your frontend:
 
 1. Log in as an administrator.
 2. Click **🌐 Translate** in the WordPress Admin Bar.
-3. A sidebar slides in. Click any visible text on the page — the sidebar jumps to that exact string so you can edit it for all languages at once.
+3. A sidebar slides in. Click any highlighted text on the page — the sidebar instantly selects it and opens the editor without losing your scroll position.
+4. Use the real-time search bar in the sidebar to quickly filter the list of strings.
 
 ---
 

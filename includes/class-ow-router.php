@@ -274,6 +274,12 @@ class OW_Router {
 	 */
 	public static function maybe_auto_redirect(): void {
 
+		// Never redirect POST requests — redirecting would convert POST to GET,
+		// silently discarding all form data (e.g. return form, checkout, contact forms).
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && strtoupper( $_SERVER['REQUEST_METHOD'] ) === 'POST' ) {
+			return;
+		}
+
 		// ── Feature flag ────────────────────────────────────────────────────
 		$enabled = (bool) get_option( 'ow_browser_detect_enabled', 1 );
 		$enabled = (bool) apply_filters( 'ow_browser_detect_enabled', $enabled );

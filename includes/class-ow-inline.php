@@ -167,7 +167,19 @@ class OW_Inline {
 				<span class="ow-sidebar__title">🌐 <?php echo  esc_html__( 'Translate', 'open-world' ) ?></span>
 				<button id="ow-sidebar-close" class="ow-sidebar__close" title="<?php echo  esc_attr__( 'Close', 'open-world' ) ?>">&times;</button>
 			</div>
-			<!-- Search / Filter bar could go here -->
+			<!-- Search / Filter bar -->
+		<div class="ow-sidebar__search-wrap">
+			<input
+				type="search"
+				id="ow-sidebar-search"
+				class="ow-sidebar__search"
+				placeholder="<?php echo esc_attr__( 'Search strings…', 'open-world' ) ?>"
+				autocomplete="off"
+				spellcheck="false"
+			>
+			<span class="ow-sidebar__search-count" id="ow-search-count"></span>
+		</div>
+
 			<div class="ow-sidebar__body" id="ow-sidebar-body">
 				<p class="ow-sidebar__loading">⏳ <?php echo  esc_html__( 'Loading strings…', 'open-world' ) ?></p>
 			</div>

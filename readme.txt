@@ -4,7 +4,7 @@ Tags: multilingual, translation, woocommerce, deepl, language switcher
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ Open World gives you full control over your website translations — built entir
 * 🚀 **Zero Database Overhead** — Uses WordPress native text domains. No extra columns, no schema changes to your existing tables.
 * 🤖 **DeepL & Google Auto-Translate** — Bulk-translate your entire site using Google Translate Free (built-in) or the DeepL API. Supports automatic batch handling and resilient rate-limit management.
 * 🔍 **Smart Scanner** — Crawls your live frontend and captures only the strings actually rendered on your pages. Skip thousands of unused strings from plugins you barely use.
-* ✏️ **Inline Translation Editor** — Translate strings visually while browsing your site. A sidebar slides in from the admin bar — just click any text and it jumps straight to the right string.
+* ✏️ **Inline Translation Editor** — Translate strings visually while browsing your site. A sidebar slides in from the admin bar — click any highlighted text to open the editor directly, or use the real-time search bar to find specific strings.
 * 🛒 **Full WooCommerce Support** — Product titles, descriptions, categories, checkout fields, and order emails are all translated automatically per language.
 * 🌐 **Hreflang & SEO-Friendly URLs** — Built-in language switchers, hreflang tags, and clean URL endpoints (e.g. `domain.com/es/`, `domain.com/pl/`).
 * 🛡️ **SEO Plugin Integrations** — Translates titles, meta descriptions, Open Graph tags, Twitter Cards, and JSON-LD structured data for **Yoast SEO**, **Rank Math**, **All in One SEO**, and **SEOPress**. No extra setup required.

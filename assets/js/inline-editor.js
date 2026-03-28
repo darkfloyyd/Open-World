@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	const closeBtn = $('#ow-sidebar-close');
 	const atAllBtn = $('#ow-at-all');
 	const saveAllBtn = $('#ow-save-all');
+	const searchInput = $('#ow-sidebar-search');
+	const searchCount = $('#ow-search-count');
 	const languages = window.owInlineLanguages || [];
 	const stringMap = window.owStringMap || {};
 	const cfg = window.owInline || {};
@@ -125,14 +127,40 @@ document.addEventListener('DOMContentLoaded', function () {
 		$$('.ow-sidebar__list-header', body).forEach(header => {
 			header.addEventListener('click', function () {
 				const item = this.closest('.ow-sidebar__list-item');
-				activateString(item.dataset.owMsgid || item.getAttribute('data-msgid'), item.dataset.domain || item.getAttribute('data-domain'));
+				activateString(item.dataset.owMsgid || item.getAttribute('data-msgid'), item.dataset.domain || item.getAttribute('data-domain'), false);
 			});
 		});
 	}
 
+	// ── Search / Filter ───────────────────────────────────────────────────
+	function filterStringList(query) {
+		const q = query.trim().toLowerCase();
+		const items = $$('.ow-sidebar__list-item', body);
+		let visible = 0;
+		items.forEach(item => {
+			const text = (item.getAttribute('data-msgid') || '').toLowerCase();
+			const match = !q || text.includes(q);
+			item.style.display = match ? '' : 'none';
+			if (match) visible++;
+		});
+		if (searchCount) {
+			searchCount.textContent = q ? `${visible} / ${items.length}` : '';
+		}
+	}
+
 	// ── Activate a String (from page click or list click) ─────────────────
-	function activateString(msgid, domain) {
+	// fromPageClick = true  → user clicked the element on the page itself.
+	//                         Clear search so item is visible; skip page-scroll
+	//                         (element is already in view).
+	// fromPageClick = false → user clicked a sidebar list item.
+	function activateString(msgid, domain, fromPageClick) {
 		if (activeMsgid === msgid) return; // Already active
+
+		// Clear search filter so the target item is always visible
+		if (fromPageClick && searchInput && searchInput.value) {
+			searchInput.value = '';
+			filterStringList('');
+		}
 
 		// Deactivate previous
 		const prevActive = $('.ow-sidebar__list-item--active', body);
@@ -165,7 +193,11 @@ document.addEventListener('DOMContentLoaded', function () {
 			if (pageEls.length > 0) {
 				activeEl = pageEls[0];
 				activeEl.classList.add('ow-translatable--active');
-				activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				// Only scroll page to the element when activated from the sidebar —
+				// if the user clicked it directly, it is already in view.
+				if (!fromPageClick) {
+					activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
 			}
 
 			// Load translations
@@ -367,6 +399,11 @@ document.addEventListener('DOMContentLoaded', function () {
 	// Show sidebar permanently
 	sidebar.classList.remove('ow-sidebar--minimized');
 
+	// Wire up search
+	if (searchInput) {
+		searchInput.addEventListener('input', () => filterStringList(searchInput.value));
+	}
+
 	// CAPTURE phase click handler to intercept clicks inside links
 	document.addEventListener('click', function (e) {
 		let el = e.target;
@@ -383,7 +420,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		const msgid = el.dataset.owMsgid;
 		const domain = el.dataset.owDomain || 'default';
 
-		activateString(msgid, domain);
+		// Brief visual flash so user gets instant feedback the click registered
+		el.classList.add('ow-translatable--flash');
+		setTimeout(() => el.classList.remove('ow-translatable--flash'), 600);
+
+		activateString(msgid, domain, true);
 	}, true);
 
 	// Close sidebar acts as "Minimize to strip" (optional functionality later, removing for now)
