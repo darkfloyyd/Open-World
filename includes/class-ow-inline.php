@@ -188,11 +188,8 @@ class OW_Inline {
 				<button id="ow-save-all" class="ow-sidebar__btn ow-sidebar__btn--save"><?php echo  esc_html__( 'Save All', 'open-world' ) ?></button>
 			</div>
 		</div>
-		<script>
-			window.owInlineLanguages = <?php echo  wp_json_encode( $languages ) ?>;
-			window.owStringMap = <?php echo  wp_json_encode( $string_map, JSON_UNESCAPED_UNICODE ) ?>;
-		</script>
 		<?php
+		wp_add_inline_script( 'ow-inline-editor', 'window.owInlineLanguages = ' . wp_json_encode( $languages ) . '; window.owStringMap = ' . wp_json_encode( $string_map, JSON_UNESCAPED_UNICODE ) . ';' );
 	}
 
 	// ── AJAX Handlers ────────────────────────────────────────────────────────

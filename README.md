@@ -1,6 +1,6 @@
-# Open World
+# Open World Translation
 
-> **The first complete, free, and open-source multilingual plugin for WordPress and WooCommerce.**
+> **A free and open-source multilingual plugin for WordPress and WooCommerce.**
 
 Open World gives you full control over your website translations — no premium lock-ins, no per-word fees, no bloated dependencies. Built entirely on WordPress-native standards and engineered for performance.
 

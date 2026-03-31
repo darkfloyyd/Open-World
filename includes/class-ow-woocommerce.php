@@ -29,6 +29,7 @@ class OW_WooCommerce {
 		// Admin meta box on product edit screen
 		add_action( 'add_meta_boxes',    [ $this, 'add_product_meta_box' ] );
 		add_action( 'save_post_product', [ $this, 'save_product_meta' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
 
 		// Fix WooCommerce Shop routing and notices
 		add_action( 'pre_get_posts', [ $this, 'fix_shop_query' ], 5 );
@@ -152,6 +153,36 @@ class OW_WooCommerce {
 
 	// ── Product Meta Box ──────────────────────────────────────────────────────
 
+	public function enqueue_admin_assets( $hook ): void {
+		global $post;
+		if ( ! in_array( $hook, [ 'post.php', 'post-new.php' ], true ) ) return;
+		if ( ! $post || 'product' !== $post->post_type ) return;
+
+		wp_register_script( 'ow-wc-admin', false, [ 'jquery' ], false, true );
+		wp_enqueue_script( 'ow-wc-admin' );
+		wp_add_inline_script( 'ow-wc-admin', '
+		document.addEventListener("DOMContentLoaded", function() {
+			document.querySelectorAll(".ow-product-tab-link").forEach(function(link) {
+				link.addEventListener("click", function(e) {
+					e.preventDefault();
+					document.querySelectorAll(".ow-product-tab-panel").forEach(function(p) { p.style.display = "none"; });
+					document.querySelectorAll(".ow-product-tab-link").forEach(function(l) { l.classList.remove("is-active"); });
+					document.querySelector(this.getAttribute("href")).style.display = "";
+					this.classList.add("is-active");
+				});
+			});
+		});
+		' );
+
+		wp_register_style( 'ow-wc-admin', false );
+		wp_enqueue_style( 'ow-wc-admin' );
+		wp_add_inline_style( 'ow-wc-admin', '
+		.ow-product-tab-nav { margin-bottom: 12px; }
+		.ow-product-tab-link { display: inline-block; padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px 4px 0 0; text-decoration: none; color: #444; background: #f7f7f7; margin-right: 3px; }
+		.ow-product-tab-link.is-active { background: #fff; color: #2271b1; border-bottom-color: #fff; }
+		' );
+	}
+
 	public function add_product_meta_box(): void {
 		add_meta_box(
 			'ow-product-translations',
@@ -214,24 +245,6 @@ class OW_WooCommerce {
 		}
 
 		echo '</div>';
-
-		// Inline tab switcher
-		echo '<script>
-		document.querySelectorAll(".ow-product-tab-link").forEach(function(link) {
-			link.addEventListener("click", function(e) {
-				e.preventDefault();
-				document.querySelectorAll(".ow-product-tab-panel").forEach(function(p) { p.style.display = "none"; });
-				document.querySelectorAll(".ow-product-tab-link").forEach(function(l) { l.classList.remove("is-active"); });
-				document.querySelector(this.getAttribute("href")).style.display = "";
-				this.classList.add("is-active");
-			});
-		});
-		</script>
-		<style>
-		.ow-product-tab-nav { margin-bottom: 12px; }
-		.ow-product-tab-link { display: inline-block; padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px 4px 0 0; text-decoration: none; color: #444; background: #f7f7f7; margin-right: 3px; }
-		.ow-product-tab-link.is-active { background: #fff; color: #2271b1; border-bottom-color: #fff; }
-		</style>';
 	}
 
 	public function save_product_meta( int $post_id ): void {

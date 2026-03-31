@@ -176,7 +176,7 @@ class OW_Admin
 				</div>
 			</div>
 
-			<script>
+			<?php ob_start(); ?>
 			function owToggleQuickStart() {
 				var content = document.getElementById('ow-quick-start-content');
 				var arrow = document.getElementById('ow-qs-arrow');
@@ -196,7 +196,7 @@ class OW_Admin
 					document.getElementById('ow-qs-arrow').innerText = '▶';
 				}
 			});
-			</script>
+			<?php wp_add_inline_script( 'ow-editor', ob_get_clean() ); ?>
 
 			<div class="ow-settings-card" style="margin-top:20px; border-left:4px solid #FFDD00; background:#fffcf0;">
 				<h2 style="margin-top:0">☕ <?php echo esc_html__('Support Open World', 'open-world') ?></h2>
@@ -656,7 +656,7 @@ class OW_Admin
 			</div>
 		</div>
 
-		<script>
+		<?php ob_start(); ?>
 		(function($) {
 			$('.ow-status-select').on('change', function() {
 				var $wrap   = $(this).closest('.ow-status-wrap');
@@ -673,9 +673,9 @@ class OW_Admin
 				}, function(res) {
 					$wrap.find('.ow-status-saving').hide();
 					if (res.success) {
-						$wrap.find('.ow-status-saved').show().delay(2000).fadeOut();
+						$wrap.find('.ow-status-saved').fadeIn().delay(2000).fadeOut();
 					} else {
-						alert(res.data || '<?php echo esc_js(__('Failed to update status.', 'open-world')) ?>');
+						alert('Error: ' + (res.data || 'Failed to change status'));
 					}
 				});
 			});
@@ -805,7 +805,7 @@ class OW_Admin
 					<span id="ow-provider-save-status" style="font-size:.85rem;color:#888"></span>
 				</div>
 
-				<script>
+				<?php ob_start(); ?>
 				(function(){
 					var radios = document.querySelectorAll('input[name="ow_provider"]');
 					var googleCard = document.getElementById('ow-provider-google-card');
@@ -866,7 +866,7 @@ class OW_Admin
 						});
 					});
 				})();
-				</script>
+				<?php wp_add_inline_script( 'ow-editor', ob_get_clean() ); ?>
 			</div>
 
 			<!-- ── Filters & Progress ────────────────────────────────────────── -->
@@ -1018,7 +1018,7 @@ class OW_Admin
 					<button type="button" class="button" id="ow-delete-cancel-btn"><?php echo esc_html__('Cancel', 'open-world') ?></button>
 					<p id="ow-delete-error" style="color:#d63638;margin:6px 0 0;font-size:.85em;display:none"></p>
 				</div>
-				<script>
+				<?php ob_start(); ?>
 				(function() {
 					const btn     = document.getElementById('ow-delete-all-btn');
 					const wrap    = document.getElementById('ow-delete-confirm');
@@ -1028,7 +1028,10 @@ class OW_Admin
 					const error   = document.getElementById('ow-delete-error');
 					const nonce   = '<?php echo esc_js(wp_create_nonce('ow_delete_all_translations')) ?>';
 
+					if (!btn) return;
+
 					btn.addEventListener('click', function() {
+						btn.style.display = 'none';
 						wrap.style.display = 'block';
 						input.value = '';
 						error.style.display = 'none';
@@ -1037,19 +1040,24 @@ class OW_Admin
 
 					cancel.addEventListener('click', function() {
 						wrap.style.display = 'none';
+						btn.style.display = 'inline-block';
 					});
 
 					confirm.addEventListener('click', async function() {
-						if (input.value.trim() !== 'DELETE') {
-							error.textContent = '<?php echo esc_js(__('Type DELETE (uppercase) to confirm.', 'open-world')) ?>';
+						if (input.value !== 'DELETE') {
+							error.innerText = '<?php echo esc_js(__('You must type EXACTLY: DELETE', 'open-world')) ?>';
 							error.style.display = 'block';
-							input.focus();
 							return;
 						}
-						confirm.disabled = true;
-						btn.disabled = true;
-						confirm.textContent = '<?php echo esc_js(__('Deleting...', 'open-world')) ?>';
+
+						if (!window.confirm('<?php echo esc_js(__('FINAL WARNING: This is irreversible. Click OK to annihilate all translations from your database.', 'open-world')) ?>')) {
+							return;
+						}
+
 						error.style.display = 'none';
+						confirm.disabled = true;
+						confirm.textContent = '<?php echo esc_js(__('Deleting...', 'open-world')) ?>';
+						
 						try {
 							const body = new URLSearchParams({
 								action: 'ow_delete_all_translations',
@@ -1057,25 +1065,24 @@ class OW_Admin
 							});
 							const r = await fetch(ajaxurl, { method: 'POST', credentials: 'same-origin', body });
 							const d = await r.json();
+							
 							if (d.success) {
 								location.reload();
 							} else {
 								error.textContent = 'Error: ' + (d.data || 'Unknown error');
 								error.style.display = 'block';
 								confirm.disabled = false;
-								btn.disabled = false;
 								confirm.textContent = '<?php echo esc_js(__('Confirm', 'open-world')) ?>';
 							}
 						} catch (e) {
 							error.textContent = '<?php echo esc_js(__('Network error. Try again.', 'open-world')) ?>';
 							error.style.display = 'block';
 							confirm.disabled = false;
-							btn.disabled = false;
 							confirm.textContent = '<?php echo esc_js(__('Confirm', 'open-world')) ?>';
 						}
 					});
 				})();
-				</script>
+				<?php wp_add_inline_script( 'ow-editor', ob_get_clean() ); ?>
 
 				</div>
 
@@ -1185,7 +1192,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 					<div class="ow-progress" style="margin-top:4px"><div class="ow-progress-bar" id="ow-deepl-usage-bar" style="width:0%"></div></div>
 					<span id="ow-deepl-usage-text" class="description"></span>
 				</div>
-				<script>
+				<?php ob_start(); ?>
 				(function(){
 					var btn=document.getElementById('ow-deepl-save'),stat=document.getElementById('ow-deepl-status'),uBox=document.getElementById('ow-deepl-usage'),uBar=document.getElementById('ow-deepl-usage-bar'),uTxt=document.getElementById('ow-deepl-usage-text');
 					if(!btn)return;
@@ -1201,7 +1208,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 						btn.disabled=false;
 					});
 				})();
-				</script>
+				<?php wp_add_inline_script( 'ow-editor', ob_get_clean() ); ?>
 				</div>
 
 				<div class="ow-settings-card ow-google-free-settings-card">
@@ -1271,6 +1278,10 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 		// Plural forms: sent as JSON array when editing plural strings
 		$plural_json = isset($_POST['plural_forms']) ? wp_unslash($_POST['plural_forms']) : null;  // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$plural_forms = $plural_json ? json_decode($plural_json, true) : null;
+		
+		if (is_array($plural_forms)) {
+			$plural_forms = array_map('sanitize_textarea_field', $plural_forms);
+		}
 
 		if (!$id)
 			wp_send_json_error('Invalid ID');

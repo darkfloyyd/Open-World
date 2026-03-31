@@ -1,14 +1,14 @@
-=== Open World ===
-Contributors: jakubmisiak
+=== Open World Translation ===
+Contributors: jakubmisiak, darkfloyd
 Tags: multilingual, translation, woocommerce, deepl, language switcher
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-The first complete, free, and open-source multilingual solution for WordPress and WooCommerce. No per-word fees. No lock-ins.
+A free and open-source multilingual solution for WordPress and WooCommerce. No per-word fees. No lock-ins.
 
 == Description ==
 
@@ -84,3 +84,10 @@ Open World is 100% free with no premium tiers, stores translations in a single e
 = What languages are supported? =
 
 Any language can be added. Built-in plural rules are included for: English, German, French, Spanish, Italian, Polish, Russian, Ukrainian, Czech, Slovak, Arabic, Chinese, Japanese, Korean, Dutch, Portuguese (PT and BR), Swedish, Danish, Finnish, Norwegian, Turkish, Hungarian, and Romanian.
+
+== External services ==
+
+This plugin offers optional automatic translation capabilities through two external third-party services: Google Translate API (Free tier interface) and DeepL API.
+
+* **Google Translate**: If you use the built-in "Google Translate Free" provider, the plugin connects to Google's translation endpoints. The original strings from your website are sent to Google to obtain translations. This service is provided by Google LLC: [Terms of Service](https://policies.google.com/terms) and [Privacy Policy](https://policies.google.com/privacy).
+* **DeepL**: If you choose to configure a DeepL API key in the settings, the plugin connects to the DeepL API to translate your content. The original strings from your website are sent to DeepL to obtain translations. This service is provided by DeepL SE: [Terms and Conditions](https://www.deepl.com/pro-license) and [Privacy Policy](https://www.deepl.com/privacy).

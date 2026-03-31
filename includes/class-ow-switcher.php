@@ -118,8 +118,7 @@ class OW_Switcher {
 	}
 
 	public static function inline_styles(): void {
-		?>
-		<style>
+		$css = '
 		.ow-switcher--dropdown { position: relative; display: inline-block; }
 		.ow-switcher__current { background: none; border: 1px solid rgba(255,255,255,.3); color: inherit; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: .9rem; }
 		.ow-switcher__menu { display: none; position: absolute; right: 0; top: 100%; min-width: 150px; background: #fff; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,.15); list-style: none; margin: 4px 0 0; padding: 4px 0; z-index: 9999; }
@@ -136,8 +135,10 @@ class OW_Switcher {
 		.ow-switcher--flags .ow-switcher__link,
 		.ow-switcher--list .ow-switcher__link { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; text-decoration: none; color: inherit; border-radius: 3px; transition: background .15s; }
 		.ow-switcher__link--active { font-weight: 700; }
-		</style>
-		<?php
+		';
+		wp_register_style( 'ow-switcher', false );
+		wp_enqueue_style( 'ow-switcher' );
+		wp_add_inline_style( 'ow-switcher', $css );
 	}
 }
 

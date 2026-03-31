@@ -243,12 +243,13 @@ class OW_Scanner {
 		if ( $forward_cookies ) {
 			// Pass selective admin auth/session cookies so restricted pages are accessible
 			foreach ( $_COOKIE as $name => $value ) {
+				$s_n = sanitize_text_field( $name );
 				if (
-					strpos( $name, 'wordpress_logged_in_' ) === 0 ||
-					strpos( $name, 'woocommerce_' ) === 0 ||
-					strpos( $name, 'wp_woocommerce_session_' ) === 0
+					strpos( $s_n, 'wordpress_logged_in_' ) === 0 ||
+					strpos( $s_n, 'woocommerce_' ) === 0 ||
+					strpos( $s_n, 'wp_woocommerce_session_' ) === 0
 				) {
-					$cookies[] = new WP_Http_Cookie( [ 'name' => $name, 'value' => $value ] );
+					$cookies[] = new WP_Http_Cookie( [ 'name' => $s_n, 'value' => sanitize_text_field( wp_unslash( $value ) ) ] );
 				}
 			}
 		}

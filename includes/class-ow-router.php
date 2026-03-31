@@ -363,8 +363,6 @@ class OW_Router {
 		add_filter( 'post_type_link', [ $this, 'filter_url' ], 10, 1 );
 		add_filter( 'term_link',      [ $this, 'filter_url' ], 10, 1 );
 		add_filter( 'wp_nav_menu_objects', [ $this, 'filter_nav_menu_items' ], 10, 1 );
-		add_filter( 'render_block',        [ $this, 'filter_url' ], 10, 1 );
-		add_filter( 'widget_text_content', [ $this, 'filter_url' ], 10, 1 );
 	}
 
 	public function filter_nav_menu_items( $items ) {

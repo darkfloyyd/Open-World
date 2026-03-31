@@ -124,9 +124,9 @@ class OW_SEO {
 			return $string;
 		}
 
-		// Running through __() with domain 'seo' lets our gettext filter intercept,
+		// Running through the gettext filter lets our engine intercept,
 		// record during Smart Scan, and return translated values on the frontend.
-		return __( $string, 'seo' ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText, WordPress.WP.I18n.TextDomainMismatch
+		return apply_filters( 'gettext', $string, $string, 'seo' );
 	}
 
 	/**
@@ -149,7 +149,7 @@ class OW_SEO {
 				if ( 0 === strpos( $value, 'http' ) ) {
 					continue;
 				}
-				$value = __( $value, 'seo' ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText, WordPress.WP.I18n.TextDomainMismatch
+				$value = apply_filters( 'gettext', $value, $value, 'seo' );
 			}
 		}
 		unset( $value );
