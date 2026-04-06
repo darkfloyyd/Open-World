@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — Configuration Facade
+ * Open World Translate — Configuration Facade
  *
  * Thin static wrapper that delegates to OW_Languages (DB-backed).
  * Kept for backwards compatibility within the plugin, and as a central

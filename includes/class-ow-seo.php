@@ -1,6 +1,6 @@
 <?php
 /**
- * SEO Plugins Integration
+ * Open World Translate — SEO Plugins Integration
  *
  * Passes popular SEO plugins' frontend output strings through WordPress gettext,
  * allowing the Smart Scanner to capture them and the translation engine to serve

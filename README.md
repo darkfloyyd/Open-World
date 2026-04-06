@@ -1,4 +1,4 @@
-# Open World Translation
+# Open World Translate
 
 > **A free and open-source multilingual plugin for WordPress and WooCommerce.**
 

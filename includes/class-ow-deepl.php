@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — DeepL API Client
+ * Open World Translate — DeepL API Client
  *
  * Handles communication with DeepL Translate API for automatic translation.
  * Supports both Free and Pro plans.
@@ -48,7 +48,7 @@ class OW_DeepL {
 	public static function test_connection(): array {
 		$key = self::get_api_key();
 		if ( ! $key ) {
-			return [ 'ok' => false, 'error' => __( 'No API key configured.', 'open-world' ) ];
+			return [ 'ok' => false, 'error' => __( 'No API key configured.', 'open-world-translate' ) ];
 		}
 
 		$response = wp_remote_get( self::get_base_url() . '/usage', [
@@ -66,12 +66,12 @@ class OW_DeepL {
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( $code === 403 ) {
-			return [ 'ok' => false, 'error' => __( 'Invalid API key. Check your key at deepl.com/your-account/keys', 'open-world' ) ];
+			return [ 'ok' => false, 'error' => __( 'Invalid API key. Check your key at deepl.com/your-account/keys', 'open-world-translate' ) ];
 		}
 
 		if ( $code !== 200 || ! is_array( $body ) ) {
 			/* translators: %d: HTTP code */
-			return [ 'ok' => false, 'error' => sprintf( __( 'Unexpected response (HTTP %d)', 'open-world' ), $code ) ];
+			return [ 'ok' => false, 'error' => sprintf( __( 'Unexpected response (HTTP %d)', 'open-world-translate' ), $code ) ];
 		}
 
 		return [
@@ -115,7 +115,7 @@ class OW_DeepL {
 	public static function translate( array $texts, string $source_lang, string $target_lang ): array {
 		$key = self::get_api_key();
 		if ( ! $key ) {
-			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => __( 'No API key.', 'open-world' ) ];
+			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => __( 'No API key.', 'open-world-translate' ) ];
 		}
 
 		if ( empty( $texts ) ) {
@@ -145,16 +145,16 @@ class OW_DeepL {
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( $code === 456 ) {
-			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => __( 'DeepL quota exceeded. Upgrade your plan or wait until next month.', 'open-world' ) ];
+			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => __( 'DeepL quota exceeded. Upgrade your plan or wait until next month.', 'open-world-translate' ) ];
 		}
 
 		if ( $code === 429 ) {
-			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => __( 'Rate limited by DeepL. Please wait a moment and try again.', 'open-world' ), 'error_type' => 'rate_limit' ];
+			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => __( 'Rate limited by DeepL. Please wait a moment and try again.', 'open-world-translate' ), 'error_type' => 'rate_limit' ];
 		}
 
 		if ( $code !== 200 || ! isset( $body['translations'] ) ) {
 			/* translators: 1: HTTP code, 2: Error message */
-			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => sprintf( __( 'DeepL error (HTTP %1$d): %2$s', 'open-world' ), $code, wp_remote_retrieve_body( $response ) ) ];
+			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => sprintf( __( 'DeepL error (HTTP %1$d): %2$s', 'open-world-translate' ), $code, wp_remote_retrieve_body( $response ) ) ];
 		}
 
 		$translated = array_map( fn( $t ) => $t['text'] ?? '', $body['translations'] );
@@ -189,7 +189,7 @@ class OW_DeepL {
 
 		$source_lang_code = OW_Languages::get_source();
 		if ( ! $source_lang_code ) {
-			return [ 'ok' => false, 'translated' => 0, 'chars_used' => 0, 'remaining' => 0, 'error' => __( 'No source language set.', 'open-world' ) ];
+			return [ 'ok' => false, 'translated' => 0, 'chars_used' => 0, 'remaining' => 0, 'error' => __( 'No source language set.', 'open-world-translate' ) ];
 		}
 
 		// Fetch untranslated rows

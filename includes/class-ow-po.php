@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — PO File Parser and Exporter
+ * Open World Translate — PO File Parser and Exporter
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -128,7 +128,7 @@ class OW_PO {
 		$rows   = OW_DB::get_all( $lang, $domain );
 
 		$lines   = [];
-		$lines[] = '# Open World Translations';
+		$lines[] = '# Open World Translates';
 		$lines[] = "# Language: {$lang} ({$locale})";
 		$lines[] = "# Domain: {$domain}";
 		$lines[] = "# Generated: {$date}";

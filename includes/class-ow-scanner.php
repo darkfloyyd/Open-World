@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — String Scanner
+ * Open World Translate — String Scanner
  *
  * Scans PHP source files for gettext calls and crawls pages for dynamic strings.
  * Stores all found strings as untranslated seeds (msgstr='') for all target languages.

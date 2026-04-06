@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — Frontend Inline Translation Editor
+ * Open World Translate — Frontend Inline Translation Editor
  *
  * Adds a "Translate" button to the WordPress admin bar.
  * When activated:
@@ -24,7 +24,7 @@ class OW_Inline {
 
 	/**
 	 * Initialize the inline editor.
-	 * Called from open-world.php on template_redirect.
+	 * Called from open-world-translate.php on template_redirect.
 	 */
 	public function init(): void {
 		if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
@@ -68,11 +68,11 @@ class OW_Inline {
 
 		if ( self::$active ) {
 			$toggle_url = add_query_arg( 'ow_translate', '0', $base_url );
-			$title      = '🌐 ' . __( 'Stop Translating', 'open-world' );
+			$title      = '🌐 ' . __( 'Stop Translating', 'open-world-translate' );
 			$class      = 'ow-ab-translate ow-ab-active';
 		} else {
 			$toggle_url = add_query_arg( 'ow_translate', '1', $base_url );
-			$title      = '🌐 ' . __( 'Translate', 'open-world' );
+			$title      = '🌐 ' . __( 'Translate', 'open-world-translate' );
 			$class      = 'ow-ab-translate';
 		}
 
@@ -164,8 +164,8 @@ class OW_Inline {
 		?>
 		<div id="ow-inline-sidebar" class="ow-sidebar">
 			<div class="ow-sidebar__header">
-				<span class="ow-sidebar__title">🌐 <?php echo  esc_html__( 'Translate', 'open-world' ) ?></span>
-				<button id="ow-sidebar-close" class="ow-sidebar__close" title="<?php echo  esc_attr__( 'Close', 'open-world' ) ?>">&times;</button>
+				<span class="ow-sidebar__title">🌐 <?php echo  esc_html__( 'Translate', 'open-world-translate' ) ?></span>
+				<button id="ow-sidebar-close" class="ow-sidebar__close" title="<?php echo  esc_attr__( 'Close', 'open-world-translate' ) ?>">&times;</button>
 			</div>
 			<!-- Search / Filter bar -->
 		<div class="ow-sidebar__search-wrap">
@@ -173,7 +173,7 @@ class OW_Inline {
 				type="search"
 				id="ow-sidebar-search"
 				class="ow-sidebar__search"
-				placeholder="<?php echo esc_attr__( 'Search strings…', 'open-world' ) ?>"
+				placeholder="<?php echo esc_attr__( 'Search strings…', 'open-world-translate' ) ?>"
 				autocomplete="off"
 				spellcheck="false"
 			>
@@ -181,11 +181,11 @@ class OW_Inline {
 		</div>
 
 			<div class="ow-sidebar__body" id="ow-sidebar-body">
-				<p class="ow-sidebar__loading">⏳ <?php echo  esc_html__( 'Loading strings…', 'open-world' ) ?></p>
+				<p class="ow-sidebar__loading">⏳ <?php echo  esc_html__( 'Loading strings…', 'open-world-translate' ) ?></p>
 			</div>
 			<div class="ow-sidebar__footer" id="ow-sidebar-footer" style="display:none">
-				<button id="ow-at-all" class="ow-sidebar__btn ow-sidebar__btn--at"><?php echo  esc_html__( 'Auto-Translate All Empty', 'open-world' ) ?></button>
-				<button id="ow-save-all" class="ow-sidebar__btn ow-sidebar__btn--save"><?php echo  esc_html__( 'Save All', 'open-world' ) ?></button>
+				<button id="ow-at-all" class="ow-sidebar__btn ow-sidebar__btn--at"><?php echo  esc_html__( 'Auto-Translate All Empty', 'open-world-translate' ) ?></button>
+				<button id="ow-save-all" class="ow-sidebar__btn ow-sidebar__btn--save"><?php echo  esc_html__( 'Save All', 'open-world-translate' ) ?></button>
 			</div>
 		</div>
 		<?php
@@ -259,7 +259,7 @@ class OW_Inline {
 		$api_key = $options['api_key'] ?? '';
 
 		if ( empty( $api_key ) ) {
-			wp_send_json_error( __( 'DeepL API key not configured. Go to Settings.', 'open-world' ) );
+			wp_send_json_error( __( 'DeepL API key not configured. Go to Settings.', 'open-world-translate' ) );
 		}
 
 		$source_lang = strtoupper( OW_Languages::get_source() );
@@ -275,7 +275,7 @@ class OW_Inline {
 		}
 
 		if ( empty( $results['translations'] ) ) {
-			wp_send_json_error( __( 'No translation returned from DeepL.', 'open-world' ) );
+			wp_send_json_error( __( 'No translation returned from DeepL.', 'open-world-translate' ) );
 		}
 
 		wp_send_json_success( [ 'translation' => $results['translations'][0] ] );
@@ -304,7 +304,7 @@ class OW_Inline {
 		}
 
 		if ( empty( $results['translations'] ) ) {
-			wp_send_json_error( __( 'No translation returned from Google Translate.', 'open-world' ) );
+			wp_send_json_error( __( 'No translation returned from Google Translate.', 'open-world-translate' ) );
 		}
 
 		wp_send_json_success( [ 'translation' => $results['translations'][0] ] );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — Gettext Filter Engine
+ * Open World Translate — Gettext Filter Engine
  *
  * Intercepts WordPress gettext calls and returns DB translations.
  *

@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — Google Translate Free Client
+ * Open World Translate — Google Translate Free Client
  *
  * Uses the unofficial Google Translate GTX endpoint for free server-side
  * batch auto-translation. No API key required.
@@ -65,7 +65,7 @@ class OW_Google_Free {
 		$response = wp_remote_get( $url, [
 			'timeout' => 30,
 			'headers' => [
-				'User-Agent' => 'Mozilla/5.0 (compatible; Open World Translation Plugin)',
+				'User-Agent' => 'Mozilla/5.0 (compatible; Open World Translate Plugin)',
 			],
 		] );
 
@@ -82,14 +82,14 @@ class OW_Google_Free {
 				'translations' => [],
 				'chars_used'   => 0,
 				/* translators: Google Translate API rate limit error */
-				'error'        => __( 'Google Translate rate limit hit. Please wait a moment and try again.', 'open-world' ),
+				'error'        => __( 'Google Translate rate limit hit. Please wait a moment and try again.', 'open-world-translate' ),
 				'error_type'   => 'rate_limit',
 			];
 		}
 
 		if ( $code !== 200 || ! is_array( $body ) || ! isset( $body[0] ) ) {
 			/* translators: %d: HTTP status code */
-			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => sprintf( __( 'Google Translate error (HTTP %d).', 'open-world' ), $code ) ];
+			return [ 'ok' => false, 'translations' => [], 'chars_used' => 0, 'error' => sprintf( __( 'Google Translate error (HTTP %d).', 'open-world-translate' ), $code ) ];
 		}
 
 		// Parse GTX response: array of [translated, original] pairs.
@@ -136,7 +136,7 @@ class OW_Google_Free {
 
 		$source_lang_code = OW_Languages::get_source();
 		if ( ! $source_lang_code ) {
-			return [ 'ok' => false, 'translated' => 0, 'chars_used' => 0, 'remaining' => 0, 'error' => __( 'No source language set.', 'open-world' ) ];
+			return [ 'ok' => false, 'translated' => 0, 'chars_used' => 0, 'remaining' => 0, 'error' => __( 'No source language set.', 'open-world-translate' ) ];
 		}
 
 		$rows = OW_DB::get_page( $target_lang, $batch_size, 0, $domain, 'untranslated', '', $source, $source_type );

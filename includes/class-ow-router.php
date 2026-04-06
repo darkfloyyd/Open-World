@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — URL Router + Language Detection
+ * Open World Translate — URL Router + Language Detection
  *
  * URL Schema: /{lang_code}/{slug} — default lang has no prefix (stays at /)
  * Detection priority: ow_lang_pref cookie > URL prefix > Accept-Language header > default lang

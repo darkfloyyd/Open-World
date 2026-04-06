@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — WooCommerce Integration
+ * Open World Translate — WooCommerce Integration
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -186,7 +186,7 @@ class OW_WooCommerce {
 	public function add_product_meta_box(): void {
 		add_meta_box(
 			'ow-product-translations',
-			__( 'Open World Translations', 'open-world' ),
+			__( 'Open World Translates', 'open-world-translate' ),
 			[ $this, 'render_product_meta_box' ],
 			'product',
 			'normal',
@@ -224,19 +224,19 @@ class OW_WooCommerce {
 
 			printf(
 				'<tr><th><label>%s</label></th><td><input type="text" name="ow_title_%s" value="%s" style="width:100%%"></td></tr>',
-				esc_html__( 'Product Title', 'open-world' ),
+				esc_html__( 'Product Title', 'open-world-translate' ),
 				esc_attr( $lang ),
 				esc_attr( $title_val )
 			);
 			printf(
 				'<tr><th><label>%s</label></th><td><textarea name="ow_short_desc_%s" rows="3" style="width:100%%">%s</textarea></td></tr>',
-				esc_html__( 'Short Description', 'open-world' ),
+				esc_html__( 'Short Description', 'open-world-translate' ),
 				esc_attr( $lang ),
 				esc_textarea( $short_desc_val )
 			);
 			printf(
 				'<tr><th><label>%s</label></th><td><textarea name="ow_desc_%s" rows="6" style="width:100%%">%s</textarea></td></tr>',
-				esc_html__( 'Full Description', 'open-world' ),
+				esc_html__( 'Full Description', 'open-world-translate' ),
 				esc_attr( $lang ),
 				esc_textarea( $desc_val )
 			);

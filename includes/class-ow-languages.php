@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — Language Registry
+ * Open World Translate — Language Registry
  *
  * Manages the list of languages from wp_ow_languages table.
  * Supports three visibility statuses:

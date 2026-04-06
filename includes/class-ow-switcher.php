@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — Language Switcher Widget + Shortcode
+ * Open World Translate — Language Switcher Widget + Shortcode
  *
  * Shortcode: [ow_language_switcher style="dropdown|flags|codes|list" show_flags="true" show_names="true"]
  * Styles:
@@ -31,7 +31,7 @@ class OW_Switcher {
 			$flag_label = $show_flag ? ( OW_Languages::get_flag( $current ) . ' ' ) : '';
 			$name_label = $show_name ? OW_Languages::get_name( $current ) : strtoupper( $current );
 			?>
-			<div class="ow-switcher ow-switcher--dropdown" role="navigation" aria-label="<?php echo  esc_attr__( 'Language', 'open-world' ) ?>">
+			<div class="ow-switcher ow-switcher--dropdown" role="navigation" aria-label="<?php echo  esc_attr__( 'Language', 'open-world-translate' ) ?>">
 				<button class="ow-switcher__current" aria-haspopup="true" aria-expanded="false">
 					<?php echo  esc_html( $flag_label . $name_label ) ?> <span aria-hidden="true">▾</span>
 				</button>
@@ -52,7 +52,7 @@ class OW_Switcher {
 		} elseif ( $style === 'codes' ) {
 			// Compact code-only: PL  EN  DE  NL  …
 			?>
-			<nav class="ow-switcher ow-switcher--codes" aria-label="<?php echo esc_attr__( 'Language', 'open-world' ); ?>">
+			<nav class="ow-switcher ow-switcher--codes" aria-label="<?php echo esc_attr__( 'Language', 'open-world-translate' ); ?>">
 			<?php
 			foreach ( $all as $lang => $row ) {
 				$active = $lang === $current ? ' ow-switcher__link--active' : '';
@@ -72,7 +72,7 @@ class OW_Switcher {
 		} else {
 			// flags or list style
 			?>
-			<nav class="ow-switcher ow-switcher--<?php echo esc_attr( $style ); ?>" aria-label="<?php echo esc_attr__( 'Language', 'open-world' ); ?>">
+			<nav class="ow-switcher ow-switcher--<?php echo esc_attr( $style ); ?>" aria-label="<?php echo esc_attr__( 'Language', 'open-world-translate' ); ?>">
 			<?php
 			foreach ( $all as $lang => $row ) {
 				$active = $lang === $current ? ' ow-switcher__link--active' : '';
@@ -147,8 +147,8 @@ class OW_Switcher {
 class OW_Switcher_Widget extends WP_Widget {
 
 	public function __construct() {
-		parent::__construct( 'ow_switcher', __( 'Language Switcher', 'open-world' ), [
-			'description' => __( 'Open World language switcher', 'open-world' ),
+		parent::__construct( 'ow_switcher', __( 'Language Switcher', 'open-world-translate' ), [
+			'description' => __( 'Open World language switcher', 'open-world-translate' ),
 		] );
 	}
 
@@ -167,7 +167,7 @@ class OW_Switcher_Widget extends WP_Widget {
 		$style = $instance['style'] ?? 'dropdown';
 		?>
 		<p>
-			<label for="<?php echo  esc_attr( $this->get_field_id( 'style' ) ) ?>"><?php echo  esc_html__( 'Style', 'open-world' ) ?></label>
+			<label for="<?php echo  esc_attr( $this->get_field_id( 'style' ) ) ?>"><?php echo  esc_html__( 'Style', 'open-world-translate' ) ?></label>
 			<select name="<?php echo  esc_attr( $this->get_field_name( 'style' ) ) ?>" id="<?php echo  esc_attr( $this->get_field_id( 'style' ) ) ?>">
 				<option value="dropdown" <?php echo  selected( $style, 'dropdown', false ) ?>>Dropdown</option>
 				<option value="flags"    <?php echo  selected( $style, 'flags',    false ) ?>>Flags only</option>

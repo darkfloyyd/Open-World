@@ -1,6 +1,6 @@
 <?php
 /**
- * Open World — Database Layer
+ * Open World Translate — Database Layer
  *
  * Table: wp_ow_translations
  * Supports:

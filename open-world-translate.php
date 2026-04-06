@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Plugin Name:       Open World Translation
- * Plugin URI:        https://github.com/darkfloyyd/open-world
+ * Plugin Name:       Open World Translate
+ * Plugin URI:        https://github.com/open-world-project/open-world-translate
  * Description:       Multilingual solution — dynamic strings, WooCommerce integration, URL-based language switcher for free.
- * Version:           1.1.4
+ * Version:           1.1.5
  * Tested up to:      6.9
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-define('OW_VERSION', '1.1.4');
+define('OW_VERSION', '1.1.5');
 define('OW_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('OW_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('OW_PLUGIN_FILE', __FILE__);
@@ -124,7 +124,7 @@ add_action('plugins_loaded', function (): void {
 
 	// Add Settings link on Plugins page
 	add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
-		$settings_link = '<a href="' . admin_url('admin.php?page=ow-settings') . '">' . __('Settings', 'open-world') . '</a>';
+		$settings_link = '<a href="' . admin_url('admin.php?page=ow-settings') . '">' . __('Settings', 'open-world-translate') . '</a>';
 		array_unshift($links, $settings_link);
 		return $links;
 	});

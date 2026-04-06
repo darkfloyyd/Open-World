@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Open World — Admin UI
+ * Open World Translate — Admin UI
  *
  * - Dashboard: per-language progress bars
  * - Translations: paginated inline editor with filters (domain/source/status/search)
@@ -19,24 +19,25 @@ class OW_Admin
 	public function register_menu(): void
 	{
 		add_menu_page(
-			__('Open World', 'open-world'),
-			'Open World',
+			__('OW Translate', 'open-world-translate'),
+			'OW Translate',
 			'manage_options',
-			'open-world',
+			'open-world-translate',
 			[$this, 'render_dashboard'],
 			'dashicons-translation',
 			82
 		);
 
-		add_submenu_page('open-world', __('Translations', 'open-world'), __('Translations', 'open-world'), 'manage_options', 'ow-translations', [$this, 'render_translations']);
-		add_submenu_page('open-world', __('Languages', 'open-world'), __('Languages', 'open-world'), 'manage_options', 'ow-languages', [$this, 'render_languages']);
-		add_submenu_page('open-world', __('Auto-Translate', 'open-world'), __('Auto-Translate', 'open-world'), 'manage_options', 'ow-auto-translate', [$this, 'render_auto_translate']);
-		add_submenu_page('open-world', __('Settings', 'open-world'), __('Settings', 'open-world'), 'manage_options', 'ow-settings', [$this, 'render_settings']);
+		add_submenu_page('open-world-translate', __('Dashboard', 'open-world-translate'), __('Dashboard', 'open-world-translate'), 'manage_options', 'open-world-translate', [$this, 'render_dashboard']);
+		add_submenu_page('open-world-translate', __('Translations', 'open-world-translate'), __('Translations', 'open-world-translate'), 'manage_options', 'ow-translations', [$this, 'render_translations']);
+		add_submenu_page('open-world-translate', __('Languages', 'open-world-translate'), __('Languages', 'open-world-translate'), 'manage_options', 'ow-languages', [$this, 'render_languages']);
+		add_submenu_page('open-world-translate', __('Auto-Translate', 'open-world-translate'), __('Auto-Translate', 'open-world-translate'), 'manage_options', 'ow-auto-translate', [$this, 'render_auto_translate']);
+		add_submenu_page('open-world-translate', __('Settings', 'open-world-translate'), __('Settings', 'open-world-translate'), 'manage_options', 'ow-settings', [$this, 'render_settings']);
 	}
 
 	public function enqueue_assets(string $hook): void
 	{
-		if (strpos($hook, 'open-world') === false && strpos($hook, 'ow-') === false) {
+		if (strpos($hook, 'open-world-translate') === false && strpos($hook, 'ow-') === false) {
 			return;
 		}
 		wp_enqueue_style('ow-admin', OW_PLUGIN_URL . 'assets/css/admin.css', [], OW_VERSION);
@@ -61,8 +62,8 @@ class OW_Admin
 			<div class="ow-page-header">
 				<img src="<?php echo esc_url(OW_PLUGIN_URL . 'assets/images/OpenWorldTransparentCompressed.png') ?>" alt="Open World" class="ow-logo">
 				<div class="ow-page-header-text">
-					<h1><?php echo esc_html__('Open World', 'open-world') ?></h1>
-					<p class="ow-tagline"><?php echo esc_html__('Multilingual solution for WordPress + WooCommerce.', 'open-world') ?></p>
+					<h1><?php echo esc_html__('Open World Translate', 'open-world-translate') ?></h1>
+					<p class="ow-tagline"><?php echo esc_html__('Multilingual solution for WordPress + WooCommerce.', 'open-world-translate') ?></p>
 				</div>
 			</div>
 
@@ -79,67 +80,67 @@ class OW_Admin
 						<div class="ow-progress-bar" style="width:<?php echo esc_attr($s['percent']) ?>%"></div>
 					</div>
 					<div class="ow-stat-sub"><?php echo esc_html($s['translated']) ?> / <?php echo esc_html($s['total']) ?> strings</div>
-					<a class="button ow-stat-link" href="<?php echo esc_url(admin_url('admin.php?page=ow-translations&lang=' . $lang)) ?>"><?php echo esc_html__('Translate', 'open-world') ?></a>
+					<a class="button ow-stat-link" href="<?php echo esc_url(admin_url('admin.php?page=ow-translations&lang=' . $lang)) ?>"><?php echo esc_html__('Translate', 'open-world-translate') ?></a>
 					</div>
 				</div>
 				<?php endforeach; ?>
 				<?php if (empty($targets)): ?>
 				<div class="ow-empty">
-					<p><?php echo esc_html__('No target languages configured. Go to Languages to add one.', 'open-world') ?></p>
-					<a href="<?php echo esc_url(admin_url('admin.php?page=ow-languages')) ?>" class="button button-primary"><?php echo esc_html__('Manage Languages', 'open-world') ?></a>
+					<p><?php echo esc_html__('No target languages configured. Go to Languages to add one.', 'open-world-translate') ?></p>
+					<a href="<?php echo esc_url(admin_url('admin.php?page=ow-languages')) ?>" class="button button-primary"><?php echo esc_html__('Manage Languages', 'open-world-translate') ?></a>
 				</div>
 				<?php endif; ?>
 			</div>
 
 			<div class="ow-actions">
-				<h2><?php echo esc_html__('Quick Actions', 'open-world') ?></h2>
+				<h2><?php echo esc_html__('Quick Actions', 'open-world-translate') ?></h2>
 				<div class="ow-actions-row">
 				<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>" style="display:inline">
 					<?php wp_nonce_field('ow_scan_strings', 'ow_scan_nonce'); ?>
 					<input type="hidden" name="action" value="ow_scan_strings">
 					<input type="hidden" name="scan_mode" value="smart">
-					<button type="submit" class="button button-primary"><?php echo esc_html__('Smart Scan', 'open-world') ?></button>
+					<button type="submit" class="button button-primary"><?php echo esc_html__('Smart Scan', 'open-world-translate') ?></button>
 				</form>
-				<a href="<?php echo esc_url(admin_url('admin.php?page=ow-languages')) ?>" class="button"><?php echo esc_html__('Manage Languages', 'open-world') ?></a>
-				<a href="<?php echo esc_url(admin_url('admin.php?page=ow-auto-translate')) ?>" class="button"><?php echo esc_html__('Auto-Translate', 'open-world') ?></a>
-				<a href="<?php echo esc_url(admin_url('admin.php?page=ow-settings')) ?>" class="button"><?php echo esc_html__('Settings', 'open-world') ?></a>
+				<a href="<?php echo esc_url(admin_url('admin.php?page=ow-languages')) ?>" class="button"><?php echo esc_html__('Manage Languages', 'open-world-translate') ?></a>
+				<a href="<?php echo esc_url(admin_url('admin.php?page=ow-auto-translate')) ?>" class="button"><?php echo esc_html__('Auto-Translate', 'open-world-translate') ?></a>
+				<a href="<?php echo esc_url(admin_url('admin.php?page=ow-settings')) ?>" class="button"><?php echo esc_html__('Settings', 'open-world-translate') ?></a>
 				</div>
 			</div>
 
 			<div class="ow-settings-card" style="margin-top:20px">
 				<h2 style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;" onclick="owToggleQuickStart()">
-					<span><?php echo esc_html__('Quick Start', 'open-world') ?></span>
+					<span><?php echo esc_html__('Quick Start', 'open-world-translate') ?></span>
 					<span id="ow-qs-arrow" style="font-size:12px; color:#888;">▼</span>
 				</h2>
 				
 				<div id="ow-quick-start-content">
-					<p class="description" style="margin-bottom:16px; margin-top:8px;"><?php echo esc_html__('New here? Follow these steps to set up multilingual translations in minutes.', 'open-world') ?></p>
+					<p class="description" style="margin-bottom:16px; margin-top:8px;"><?php echo esc_html__('New here? Follow these steps to set up multilingual translations in minutes.', 'open-world-translate') ?></p>
 
 					<ol style="margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:10px">
 
 						<li style="display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border:1px solid #e0e0e0;border-radius:6px;background:#f9f9f9">
 							<span style="min-width:28px;height:28px;border-radius:50%;background:#2271b1;color:#fff;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center">1</span>
 							<div>
-								<strong><?php echo esc_html__('Add your languages', 'open-world') ?></strong>
-								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Go to Languages, add a source language (e.g. English) and one or more target languages (e.g. Polish, German). Each target language gets its own URL prefix.', 'open-world') ?></p>
-								<p style="margin:6px 0 0;color:#d63638;font-size:.85rem"><strong><?php echo esc_html__('Important:', 'open-world') ?></strong> <?php
+								<strong><?php echo esc_html__('Add your languages', 'open-world-translate') ?></strong>
+								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Go to Languages, add a source language (e.g. English) and one or more target languages (e.g. Polish, German). Each target language gets its own URL prefix.', 'open-world-translate') ?></p>
+								<p style="margin:6px 0 0;color:#d63638;font-size:.85rem"><strong><?php echo esc_html__('Important:', 'open-world-translate') ?></strong> <?php
 		/* translators: %s: URL to the Permalinks settings page */
-		echo wp_kses_post(sprintf(__('After adding a new language, go to <a href="%s">Settings → Permalinks</a> and click "Save Changes" <strong>twice</strong> to refresh your URLs.', 'open-world'), admin_url('options-permalink.php')))
+		echo wp_kses_post(sprintf(__('After adding a new language, go to <a href="%s">Settings → Permalinks</a> and click "Save Changes" <strong>twice</strong> to refresh your URLs.', 'open-world-translate'), admin_url('options-permalink.php')))
 		?></p>
-								<a href="<?php echo esc_url(admin_url('admin.php?page=ow-languages')) ?>" class="button button-small" style="margin-top:8px;font-size:.82rem"><?php echo esc_html__('Manage Languages →', 'open-world') ?></a>
+								<a href="<?php echo esc_url(admin_url('admin.php?page=ow-languages')) ?>" class="button button-small" style="margin-top:8px;font-size:.82rem"><?php echo esc_html__('Manage Languages →', 'open-world-translate') ?></a>
 							</div>
 						</li>
 
 						<li style="display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border:1px solid #e0e0e0;border-radius:6px;background:#f9f9f9">
 							<span style="min-width:28px;height:28px;border-radius:50%;background:#2271b1;color:#fff;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center">2</span>
 							<div>
-								<strong><?php echo esc_html__('Run Smart Scan', 'open-world') ?></strong>
-								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Smart Scan crawls your published pages and WooCommerce endpoints to collect the strings your visitors actually see — without importing thousands of unused strings.', 'open-world') ?></p>
+								<strong><?php echo esc_html__('Run Smart Scan', 'open-world-translate') ?></strong>
+								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Smart Scan crawls your published pages and WooCommerce endpoints to collect the strings your visitors actually see — without importing thousands of unused strings.', 'open-world-translate') ?></p>
 								<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>" style="display:inline;margin-top:8px">
 									<?php wp_nonce_field('ow_scan_strings', 'ow_scan_nonce'); ?>
 									<input type="hidden" name="action" value="ow_scan_strings">
 									<input type="hidden" name="scan_mode" value="smart">
-									<button type="submit" class="button button-primary button-small" style="font-size:.82rem"><?php echo esc_html__('Run Smart Scan →', 'open-world') ?></button>
+									<button type="submit" class="button button-primary button-small" style="font-size:.82rem"><?php echo esc_html__('Run Smart Scan →', 'open-world-translate') ?></button>
 								</form>
 							</div>
 						</li>
@@ -147,32 +148,32 @@ class OW_Admin
 						<li style="display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border:1px solid #e0e0e0;border-radius:6px;background:#f9f9f9">
 							<span style="min-width:28px;height:28px;border-radius:50%;background:#2271b1;color:#fff;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center">3</span>
 							<div>
-								<strong><?php echo esc_html__('Auto-translate everything', 'open-world') ?></strong>
-								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Use Google Translate (free, no key needed) or DeepL to bulk-translate all scanned strings in one click. Switch providers anytime on the Auto-Translate page.', 'open-world') ?></p>
-								<a href="<?php echo esc_url(admin_url('admin.php?page=ow-auto-translate')) ?>" class="button button-primary button-small" style="margin-top:8px;font-size:.82rem"><?php echo esc_html__('Open Auto-Translate →', 'open-world') ?></a>
+								<strong><?php echo esc_html__('Auto-translate everything', 'open-world-translate') ?></strong>
+								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Use Google Translate (free, no key needed) or DeepL to bulk-translate all scanned strings in one click. Switch providers anytime on the Auto-Translate page.', 'open-world-translate') ?></p>
+								<a href="<?php echo esc_url(admin_url('admin.php?page=ow-auto-translate')) ?>" class="button button-primary button-small" style="margin-top:8px;font-size:.82rem"><?php echo esc_html__('Open Auto-Translate →', 'open-world-translate') ?></a>
 							</div>
 						</li>
 
 						<li style="display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border:1px solid #e0e0e0;border-radius:6px;background:#f9f9f9">
 							<span style="min-width:28px;height:28px;border-radius:50%;background:#2271b1;color:#fff;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center">4</span>
 							<div>
-								<strong><?php echo esc_html__('Review &amp; refine', 'open-world') ?></strong>
-								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Open the Translations editor to review, edit, or approve any string. You can also click any text on the frontend while logged in to edit it inline.', 'open-world') ?></p>
-								<a href="<?php echo esc_url(admin_url('admin.php?page=ow-translations')) ?>" class="button button-small" style="margin-top:8px;font-size:.82rem"><?php echo esc_html__('Open Translations →', 'open-world') ?></a>
+								<strong><?php echo esc_html__('Review &amp; refine', 'open-world-translate') ?></strong>
+								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Open the Translations editor to review, edit, or approve any string. You can also click any text on the frontend while logged in to edit it inline.', 'open-world-translate') ?></p>
+								<a href="<?php echo esc_url(admin_url('admin.php?page=ow-translations')) ?>" class="button button-small" style="margin-top:8px;font-size:.82rem"><?php echo esc_html__('Open Translations →', 'open-world-translate') ?></a>
 							</div>
 						</li>
 
 						<li style="display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border:1px solid #e0e0e0;border-radius:6px;background:#f9f9f9">
 							<span style="min-width:28px;height:28px;border-radius:50%;background:#46b450;color:#fff;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center">✓</span>
 							<div>
-								<strong><?php echo esc_html__("You're live!", 'open-world') ?></strong>
-								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Add the language switcher wherever you need it: use the Open World widget in Appearance → Widgets, place the shortcode [open_world_switcher] in any page or template, or add the widget block in the Site Editor. URL-based routing (/en/, /pl/, /de/ etc.) is active automatically for all target languages.', 'open-world') ?></p>
+								<strong><?php echo esc_html__("You're live!", 'open-world-translate') ?></strong>
+								<p style="margin:4px 0 0;color:#555;font-size:.85rem"><?php echo esc_html__('Add the language switcher wherever you need it: use the Open World widget in Appearance → Widgets, place the shortcode [open_world_switcher] in any page or template, or add the widget block in the Site Editor. URL-based routing (/en/, /pl/, /de/ etc.) is active automatically for all target languages.', 'open-world-translate') ?></p>
 							</div>
 						</li>
 
 					</ol>
 
-					<p style="margin-top:16px;font-size:.82rem;color:#888"><?php echo esc_html__('Tip: Re-run Smart Scan whenever you publish new content to capture new strings.', 'open-world') ?></p>
+					<p style="margin-top:16px;font-size:.82rem;color:#888"><?php echo esc_html__('Tip: Re-run Smart Scan whenever you publish new content to capture new strings.', 'open-world-translate') ?></p>
 				</div>
 			</div>
 
@@ -199,12 +200,12 @@ class OW_Admin
 			<?php wp_add_inline_script( 'ow-editor', ob_get_clean() ); ?>
 
 			<div class="ow-settings-card" style="margin-top:20px; border-left:4px solid #FFDD00; background:#fffcf0;">
-				<h2 style="margin-top:0">☕ <?php echo esc_html__('Support Open World', 'open-world') ?></h2>
+				<h2 style="margin-top:0">☕ <?php echo esc_html__('Support Open World Project', 'open-world-translate') ?></h2>
 				<p class="description" style="margin-bottom:16px; color:#444;">
-					<?php echo wp_kses_post(__('I created Open World to give the WordPress community a truly free, native, and bloat-free multilingual solution. If this plugin saves you time or money, please consider buying me a coffee! It directly helps me maintain the project and develop new features.', 'open-world')) ?>
+					<?php echo wp_kses_post(__('I created Open World Translate to give the WordPress community a truly free, native, and bloat-free multilingual solution. If this plugin saves you time or money, please consider buying me a coffee! It directly helps me maintain the project and develop new features.', 'open-world-translate')) ?>
 				</p>
 				<a href="https://buymeacoffee.com/jakubmisiak" target="_blank" rel="noopener noreferrer" class="button" style="background:#FFDD00; color:#000; border-color:#FFDD00; text-shadow:none; font-weight:600; padding:0 16px;">
-					<?php echo esc_html__('Buy me a coffee', 'open-world') ?>
+					<?php echo esc_html__('Buy me a coffee', 'open-world-translate') ?>
 				</a>
 			</div>
 		</div>
@@ -218,7 +219,7 @@ class OW_Admin
 		$targets = OW_Languages::get_target_languages();
 
 		if (empty($targets)) {
-			echo '<div class="wrap ow-wrap"><p>' . esc_html__('No target languages. Add languages first.', 'open-world') . '</p></div>';
+			echo '<div class="wrap ow-wrap"><p>' . esc_html__('No target languages. Add languages first.', 'open-world-translate') . '</p></div>';
 			return;
 		}
 
@@ -255,9 +256,9 @@ class OW_Admin
 		?>
 		<div class="wrap ow-wrap">
 			<div class="ow-page-header">
-				<img src="<?php echo esc_url(OW_PLUGIN_URL . 'assets/images/OpenWorldTransparentCompressed.png') ?>" alt="Open World" class="ow-logo">
+				<img src="<?php echo esc_url(OW_PLUGIN_URL . 'assets/images/OpenWorldTransparentCompressed.png') ?>" alt="Open World Translate" class="ow-logo">
 				<div class="ow-page-header-text">
-					<h1><?php echo esc_html__('Translations', 'open-world') ?></h1>
+					<h1><?php echo esc_html__('Translations', 'open-world-translate') ?></h1>
 					<span class="ow-lang-badge"><?php echo esc_html(($flags[$lang] ?? '') . ' ' . ($names[$lang] ?? $lang)) ?></span>
 				</div>
 			</div>
@@ -278,47 +279,47 @@ class OW_Admin
 				<input type="hidden" name="page" value="ow-translations">
 				<input type="hidden" name="lang" value="<?php echo esc_attr($lang) ?>">
 				<select name="domain">
-					<option value=""><?php echo esc_html__('All domains', 'open-world') ?></option>
+					<option value=""><?php echo esc_html__('All domains', 'open-world-translate') ?></option>
 					<?php foreach ($domains as $d): ?>
 					<option value="<?php echo esc_attr($d) ?>" <?php echo selected($domain, $d, false) ?>><?php echo esc_html($d) ?></option>
 					<?php endforeach; ?>
 				</select>
 				<select name="source">
-					<option value=""><?php echo esc_html__('All sources', 'open-world') ?></option>
+					<option value=""><?php echo esc_html__('All sources', 'open-world-translate') ?></option>
 					<?php foreach ($sources as $src): ?>
 					<option value="<?php echo esc_attr($src) ?>" <?php echo selected($source, $src, false) ?>><?php echo esc_html($src) ?></option>
 					<?php endforeach; ?>
 				</select>
 				<select name="status">
-					<option value=""><?php echo esc_html__('All', 'open-world') ?></option>
-					<option value="untranslated" <?php echo selected($status, 'untranslated', false) ?>><?php echo esc_html__('Untranslated', 'open-world') ?></option>
-					<option value="translated"   <?php echo selected($status, 'translated', false) ?>><?php echo esc_html__('Translated', 'open-world') ?></option>
+					<option value=""><?php echo esc_html__('All', 'open-world-translate') ?></option>
+					<option value="untranslated" <?php echo selected($status, 'untranslated', false) ?>><?php echo esc_html__('Untranslated', 'open-world-translate') ?></option>
+					<option value="translated"   <?php echo selected($status, 'translated', false) ?>><?php echo esc_html__('Translated', 'open-world-translate') ?></option>
 				</select>
-				<select name="source_type" style="padding-right: 25px;" title="<?php echo esc_attr__('Filter by source type: theme = found in theme PHP files, plugin = from plugin PHP/POT, dynamic = captured at runtime during page crawl, static = manually imported or seeded', 'open-world') ?>">
-					<option value=""><?php echo esc_html__('All types', 'open-world') ?></option>
+				<select name="source_type" style="padding-right: 25px;" title="<?php echo esc_attr__('Filter by source type: theme = found in theme PHP files, plugin = from plugin PHP/POT, dynamic = captured at runtime during page crawl, static = manually imported or seeded', 'open-world-translate') ?>">
+					<option value=""><?php echo esc_html__('All types', 'open-world-translate') ?></option>
 					<?php foreach ($source_types as $st): ?>
 					<option value="<?php echo esc_attr($st) ?>" <?php echo selected($source_type, $st, false) ?>><?php echo esc_html($st) ?></option>
 					<?php endforeach; ?>
 				</select>
 				<select name="per_page" style="padding-right: 17px;">
 					<?php foreach ([50, 100, 200] as $pp): ?>
-					<option value="<?php echo esc_attr($pp) ?>" <?php echo selected($per_page, $pp, false) ?>><?php echo esc_html($pp) ?> / <?php echo esc_html__('page', 'open-world') ?></option>
+					<option value="<?php echo esc_attr($pp) ?>" <?php echo selected($per_page, $pp, false) ?>><?php echo esc_html($pp) ?> / <?php echo esc_html__('page', 'open-world-translate') ?></option>
 					<?php endforeach; ?>
 				</select>
 				<input type="search" name="search" id="ow-search-input"
-				       placeholder="<?php echo esc_attr__('Search strings...', 'open-world') ?>"
+				       placeholder="<?php echo esc_attr__('Search strings...', 'open-world-translate') ?>"
 				       value="<?php echo esc_attr($search) ?>">
-				<button type="submit" class="button"><?php echo esc_html__('Filter', 'open-world') ?></button>
+				<button type="submit" class="button"><?php echo esc_html__('Filter', 'open-world-translate') ?></button>
 				<?php if ($domain || $status || $search || $source || $source_type): ?>
-				<a href="<?php echo esc_url($base_url . ($per_page !== 50 ? '&per_page=' . $per_page : '')) ?>" class="button"><?php echo esc_html__('Clear', 'open-world') ?></a>
+				<a href="<?php echo esc_url($base_url . ($per_page !== 50 ? '&per_page=' . $per_page : '')) ?>" class="button"><?php echo esc_html__('Clear', 'open-world-translate') ?></a>
 				<?php endif; ?>
 			</form>
 			</div>
 
 			<?php if (empty($rows)): ?>
 			<div class="ow-empty">
-				<p><?php echo esc_html__('No strings found. Run the scanner first.', 'open-world') ?></p>
-				<a href="<?php echo esc_url(admin_url('admin.php?page=ow-settings')) ?>" class="button button-primary"><?php echo esc_html__('Go to Settings', 'open-world') ?></a>
+				<p><?php echo esc_html__('No strings found. Run the scanner first.', 'open-world-translate') ?></p>
+				<a href="<?php echo esc_url(admin_url('admin.php?page=ow-settings')) ?>" class="button button-primary"><?php echo esc_html__('Go to Settings', 'open-world-translate') ?></a>
 			</div>
 			<?php else: ?>
 
@@ -327,7 +328,7 @@ class OW_Admin
 				<span class="ow-total-info"><?php
 			echo esc_html(sprintf(
 				/* translators: 1: start offset, 2: end offset, 3: total strings, 4: current page, 5: total pages */
-				__('Showing %1$d–%2$d of %3$s strings (page %4$d of %5$s)', 'open-world'),
+				__('Showing %1$d–%2$d of %3$s strings (page %4$d of %5$s)', 'open-world-translate'),
 				$offset + 1,
 				min($offset + $per_page, $total),
 				number_format_i18n($total),
@@ -341,8 +342,8 @@ class OW_Admin
 			<table class="wp-list-table widefat fixed striped ow-editor-table" id="ow-editor-table">
 				<thead>
 					<tr>
-						<th class="ow-col-source"><?php echo esc_html__('Source', 'open-world') ?></th>
-						<th class="ow-col-original"><?php echo esc_html__('Original', 'open-world') ?></th>
+						<th class="ow-col-source"><?php echo esc_html__('Source', 'open-world-translate') ?></th>
+						<th class="ow-col-original"><?php echo esc_html__('Original', 'open-world-translate') ?></th>
 						<th class="ow-col-translation"><?php echo esc_html($names[$lang] ?? $lang) ?></th>
 						<th class="ow-col-status"></th>
 					</tr>
@@ -365,7 +366,7 @@ class OW_Admin
 						<td class="ow-col-original">
 							<span class="ow-msgid"><?php echo esc_html($row['msgid']) ?></span>
 							<?php if ($has_plural): ?>
-							<span class="ow-msgid-plural"><?php echo esc_html__('Plural:', 'open-world') ?> <?php echo esc_html($row['msgid_plural']) ?></span>
+							<span class="ow-msgid-plural"><?php echo esc_html__('Plural:', 'open-world-translate') ?> <?php echo esc_html($row['msgid_plural']) ?></span>
 							<?php endif; ?>
 						</td>
 						<td class="ow-col-translation">
@@ -401,7 +402,7 @@ class OW_Admin
 				<span class="ow-total-info"><?php
 			echo esc_html(sprintf(
 				/* translators: 1: current page, 2: total pages */
-				__('Page %1$d of %2$s', 'open-world'),
+				__('Page %1$d of %2$s', 'open-world-translate'),
 				$page,
 				number_format_i18n($pages)
 			));
@@ -430,7 +431,7 @@ class OW_Admin
 
 		// « Prev
 		if ($current > 1)
-			echo wp_kses_post(sprintf('<a class="ow-page-link" href="%s" title="%s">&laquo;</a>', $link($current - 1), esc_attr__('Previous', 'open-world')));
+			echo wp_kses_post(sprintf('<a class="ow-page-link" href="%s" title="%s">&laquo;</a>', $link($current - 1), esc_attr__('Previous', 'open-world-translate')));
 
 		// Page 1
 		if ($current > 3)
@@ -458,7 +459,7 @@ class OW_Admin
 
 		// » Next
 		if ($current < $total_pages)
-			echo wp_kses_post(sprintf('<a class="ow-page-link" href="%s" title="%s">&raquo;</a>', $link($current + 1), esc_attr__('Next', 'open-world')));
+			echo wp_kses_post(sprintf('<a class="ow-page-link" href="%s" title="%s">&raquo;</a>', $link($current + 1), esc_attr__('Next', 'open-world-translate')));
 
 		echo '</nav>';
 	}
@@ -481,9 +482,9 @@ class OW_Admin
 		?>
 		<div class="wrap ow-wrap">
 			<div class="ow-page-header">
-				<img src="<?php echo esc_url(OW_PLUGIN_URL . 'assets/images/OpenWorldTransparentCompressed.png') ?>" alt="Open World" class="ow-logo">
+				<img src="<?php echo esc_url(OW_PLUGIN_URL . 'assets/images/OpenWorldTransparentCompressed.png') ?>" alt="Open World Translate" class="ow-logo">
 				<div class="ow-page-header-text">
-					<h1><?php echo esc_html__('Language Management', 'open-world') ?></h1>
+					<h1><?php echo esc_html__('Language Management', 'open-world-translate') ?></h1>
 				</div>
 			</div>
 
@@ -492,48 +493,48 @@ class OW_Admin
 			<?php endif; ?>
 
 			<div class="notice notice-warning inline" style="margin-top:20px; border-left-color: #f56e28;">
-				<p><strong>ℹ️ <?php echo esc_html__('Pro Tip: URL Routing', 'open-world') ?></strong> — <?php
+				<p><strong>ℹ️ <?php echo esc_html__('Pro Tip: URL Routing', 'open-world-translate') ?></strong> — <?php
 		/* translators: %s: URL to the Permalinks settings page */
-		echo wp_kses_post(sprintf(__('Whenever you add a new language, you must go to <a href="%s">Settings → Permalinks</a> and click "Save Changes" <strong>twice</strong> to make the new language URLs (e.g. /pl/) work correctly without 404 errors.', 'open-world'), admin_url('options-permalink.php')))
+		echo wp_kses_post(sprintf(__('Whenever you add a new language, you must go to <a href="%s">Settings → Permalinks</a> and click "Save Changes" <strong>twice</strong> to make the new language URLs (e.g. /pl/) work correctly without 404 errors.', 'open-world-translate'), admin_url('options-permalink.php')))
 		?></p>
 			</div>
 
 			<!-- Current Languages Table -->
-			<h2 style="margin-bottom:6px"><?php echo esc_html__('Languages', 'open-world') ?></h2>
+			<h2 style="margin-bottom:6px"><?php echo esc_html__('Languages', 'open-world-translate') ?></h2>
 
 			<p class="description" style="margin-bottom:14px">
-				<?php echo esc_html__('Manage all languages and their frontend visibility. Status controls who can access each language on the frontend.', 'open-world') ?>
+				<?php echo esc_html__('Manage all languages and their frontend visibility. Status controls who can access each language on the frontend.', 'open-world-translate') ?>
 			</p>
 
 			<!-- Status legend -->
 			<div class="ow-status-legend" style="display:flex;gap:18px;margin-bottom:16px;flex-wrap:wrap">
-				<span class="ow-status-element ow-status-active" title="<?php echo esc_attr__('Visible and accessible by all visitors on the frontend.', 'open-world') ?>">
-					🟢 <?php echo esc_html__('Active', 'open-world') ?>
-					<span class="ow-status-hint">&mdash; <?php echo esc_html__('public, in switcher, in hreflang', 'open-world') ?></span>
+				<span class="ow-status-element ow-status-active" title="<?php echo esc_attr__('Visible and accessible by all visitors on the frontend.', 'open-world-translate') ?>">
+					🟢 <?php echo esc_html__('Active', 'open-world-translate') ?>
+					<span class="ow-status-hint">&mdash; <?php echo esc_html__('public, in switcher, in hreflang', 'open-world-translate') ?></span>
 				</span>
-				<span class="ow-status-element ow-status-pending" title="<?php echo esc_attr__('Accessible only by administrators. Hidden from guests. Useful for translating before going live.', 'open-world') ?>">
-					🟡 <?php echo esc_html__('Pending', 'open-world') ?>
-					<span class="ow-status-hint">&mdash; <?php echo esc_html__('admins only, hidden from guests', 'open-world') ?></span>
+				<span class="ow-status-element ow-status-pending" title="<?php echo esc_attr__('Accessible only by administrators. Hidden from guests. Useful for translating before going live.', 'open-world-translate') ?>">
+					🟡 <?php echo esc_html__('Pending', 'open-world-translate') ?>
+					<span class="ow-status-hint">&mdash; <?php echo esc_html__('admins only, hidden from guests', 'open-world-translate') ?></span>
 				</span>
-				<span class="ow-status-element ow-status-inactive" title="<?php echo esc_attr__('Completely disabled. No URL endpoint. Not accessible by anyone, including admins.', 'open-world') ?>">
-					⚫ <?php echo esc_html__('Inactive', 'open-world') ?>
-					<span class="ow-status-hint">&mdash; <?php echo esc_html__('disabled, no frontend access', 'open-world') ?></span>
+				<span class="ow-status-element ow-status-inactive" title="<?php echo esc_attr__('Completely disabled. No URL endpoint. Not accessible by anyone, including admins.', 'open-world-translate') ?>">
+					⚫ <?php echo esc_html__('Inactive', 'open-world-translate') ?>
+					<span class="ow-status-hint">&mdash; <?php echo esc_html__('disabled, no frontend access', 'open-world-translate') ?></span>
 				</span>
 			</div>
 
 			<table class="wp-list-table widefat fixed striped" style="border-radius: var(--ow-radius-sm);">
 				<thead>
 					<tr>
-						<th style="width:16px; border-top-left-radius: var(--ow-radius-sm);"><span class="screen-reader-text"><?php echo esc_html__('Flag', 'open-world') ?></span></th>
-						<th style="width:144px"><?php echo esc_html__('Language', 'open-world') ?></th>
-						<th style="width:50px"><?php echo esc_html__('Code', 'open-world') ?></th>
-						<th style="width:78px"><?php echo esc_html__('Locale', 'open-world') ?></th>
-						<th style="width:250px"><?php echo esc_html__('Role', 'open-world') ?></th>
+						<th style="width:16px; border-top-left-radius: var(--ow-radius-sm);"><span class="screen-reader-text"><?php echo esc_html__('Flag', 'open-world-translate') ?></span></th>
+						<th style="width:144px"><?php echo esc_html__('Language', 'open-world-translate') ?></th>
+						<th style="width:50px"><?php echo esc_html__('Code', 'open-world-translate') ?></th>
+						<th style="width:78px"><?php echo esc_html__('Locale', 'open-world-translate') ?></th>
+						<th style="width:250px"><?php echo esc_html__('Role', 'open-world-translate') ?></th>
 						<th style="width:100px">
-							<?php echo esc_html__('Status', 'open-world') ?>
-							<span class="ow-info" title="<?php echo esc_attr__('Controls frontend visibility. Active = public. Pending = admins only. Inactive = disabled.', 'open-world') ?>">ⓘ</span>
+							<?php echo esc_html__('Status', 'open-world-translate') ?>
+							<span class="ow-info" title="<?php echo esc_attr__('Controls frontend visibility. Active = public. Pending = admins only. Inactive = disabled.', 'open-world-translate') ?>">ⓘ</span>
 						</th>
-						<th style="width:300px; border-top-right-radius: var(--ow-radius-sm);"><?php echo esc_html__('Actions', 'open-world') ?></th>
+						<th style="width:300px; border-top-right-radius: var(--ow-radius-sm);"><?php echo esc_html__('Actions', 'open-world-translate') ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -551,30 +552,30 @@ class OW_Admin
 						<td><code><?php echo esc_html($row['locale']) ?></code></td>
 						<td>
 							<?php if ($is_default): ?>
-								<span class="ow-role-badge ow-role-default"><?php echo esc_html__('Default URL', 'open-world') ?></span>
+								<span class="ow-role-badge ow-role-default"><?php echo esc_html__('Default URL', 'open-world-translate') ?></span>
 							<?php endif; ?>
 							<?php if ($is_source): ?>
-								<span class="ow-role-badge ow-role-source"><?php echo esc_html__('Source', 'open-world') ?></span>
+								<span class="ow-role-badge ow-role-source"><?php echo esc_html__('Source', 'open-world-translate') ?></span>
 							<?php endif; ?>
 							<?php if ($lang === $fallback): ?>
-								<span class="ow-role-badge ow-role-fallback"><?php echo esc_html__('Fallback', 'open-world') ?></span>
+								<span class="ow-role-badge ow-role-fallback"><?php echo esc_html__('Fallback', 'open-world-translate') ?></span>
 							<?php endif; ?>
 							<?php if (!$is_default && !$is_source && $lang !== $fallback): ?>
-								<span class="ow-role-badge ow-role-target"><?php echo esc_html__('Target', 'open-world') ?></span>
+								<span class="ow-role-badge ow-role-target"><?php echo esc_html__('Target', 'open-world-translate') ?></span>
 							<?php endif; ?>
 						</td>
 						<td>
 							<?php if ($locked): ?>
-								<span class="ow-status-element ow-status-active" title="<?php echo esc_attr__('Default and Source languages are always active.', 'open-world') ?>">
-									🟢 <?php echo esc_html__('Active', 'open-world') ?>
+								<span class="ow-status-element ow-status-active" title="<?php echo esc_attr__('Default and Source languages are always active.', 'open-world-translate') ?>">
+									🟢 <?php echo esc_html__('Active', 'open-world-translate') ?>
 								</span>
-								<span style="font-size:.8em;color:#888;display:block;margin-top:2px;position: absolute; transform: translate(-34px, -27px);"><?php echo esc_html__('locked', 'open-world') ?></span>
+								<span style="font-size:.8em;color:#888;display:block;margin-top:2px;position: absolute; transform: translate(-34px, -27px);"><?php echo esc_html__('locked', 'open-world-translate') ?></span>
 							<?php else: ?>
 								<div class="ow-status-wrap" data-lang="<?php echo esc_attr($lang) ?>" data-nonce="<?php echo esc_attr(wp_create_nonce('ow_set_lang_status_' . $lang)) ?>">
 									<select class="ow-status-select" style="max-width:160px">
-										<option value="active"   <?php echo selected($status, 'active', false) ?>>🟢 <?php echo esc_html__('Active', 'open-world') ?></option>
-										<option value="pending"  <?php echo selected($status, 'pending', false) ?>>🟡 <?php echo esc_html__('Pending', 'open-world') ?></option>
-										<option value="inactive" <?php echo selected($status, 'inactive', false) ?>>⚫ <?php echo esc_html__('Inactive', 'open-world') ?></option>
+										<option value="active"   <?php echo selected($status, 'active', false) ?>>🟢 <?php echo esc_html__('Active', 'open-world-translate') ?></option>
+										<option value="pending"  <?php echo selected($status, 'pending', false) ?>>🟡 <?php echo esc_html__('Pending', 'open-world-translate') ?></option>
+										<option value="inactive" <?php echo selected($status, 'inactive', false) ?>>⚫ <?php echo esc_html__('Inactive', 'open-world-translate') ?></option>
 									</select>
 									<span class="ow-status-saving" style="display:none;margin-left:6px;color:#888;font-size:.85em">saving…</span>
 									<span class="ow-status-saved"  style="display:none;margin-left:6px;color:#46b450;font-size:.85em">✓</span>
@@ -583,9 +584,9 @@ class OW_Admin
 						</td>
 						<td style="white-space:nowrap">
 							<?php
-							$this->lang_action_link($lang, 'set_default', __('Set Default URL', 'open-world'), $is_default);
-							$this->lang_action_link($lang, 'set_source', __('Set Source', 'open-world'), $is_source);
-							$this->lang_action_link($lang, 'set_fallback', __('Set Fallback', 'open-world'), $lang === $fallback);
+							$this->lang_action_link($lang, 'set_default', __('Set Default URL', 'open-world-translate'), $is_default);
+							$this->lang_action_link($lang, 'set_source', __('Set Source', 'open-world-translate'), $is_source);
+							$this->lang_action_link($lang, 'set_fallback', __('Set Fallback', 'open-world-translate'), $lang === $fallback);
 							if (!$is_default && !$is_source):
 								?>
 							<a href="<?php echo esc_url(wp_nonce_url(
@@ -593,7 +594,7 @@ class OW_Admin
 									'ow_lang_action'
 								)) ?>" class="button button-small button-link-delete"
 							   onclick="return confirm('Remove language &quot;<?php echo esc_js($lang) ?>&quot; and all its translations? This cannot be undone.')"
-							><?php echo esc_html__('Remove', 'open-world') ?></a>
+							><?php echo esc_html__('Remove', 'open-world-translate') ?></a>
 							<?php endif; ?>
 						</td>
 					</tr>
@@ -602,10 +603,10 @@ class OW_Admin
 			</table>
 
 			<!-- Add Language -->
-			<h2 style="margin-top:30px"><?php echo esc_html__('Add Language', 'open-world') ?></h2>
+			<h2 style="margin-top:30px"><?php echo esc_html__('Add Language', 'open-world-translate') ?></h2>
 			<div class="ow-settings-grid">
 				<div class="ow-settings-card">
-					<h3><?php echo esc_html__('Quick Add (Known Language)', 'open-world') ?></h3>
+					<h3><?php echo esc_html__('Quick Add (Known Language)', 'open-world-translate') ?></h3>
 					<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>">
 						<?php wp_nonce_field('ow_lang_action'); ?>
 						<input type="hidden" name="action" value="ow_lang_action">
@@ -622,35 +623,35 @@ class OW_Admin
 						</select>
 						<br><br>
 						<p class="description" style="margin-bottom:8px">
-							<?php echo esc_html__('New languages are added as Active. Change status to Pending to work on translations before making it public.', 'open-world') ?>
+							<?php echo esc_html__('New languages are added as Active. Change status to Pending to work on translations before making it public.', 'open-world-translate') ?>
 						</p>
-						<button type="submit" class="button button-primary"><?php echo esc_html__('Add Language', 'open-world') ?></button>
+						<button type="submit" class="button button-primary"><?php echo esc_html__('Add Language', 'open-world-translate') ?></button>
 					</form>
 				</div>
 
 				<div class="ow-settings-card">
-					<h3><?php echo esc_html__('Add Custom Language', 'open-world') ?></h3>
+					<h3><?php echo esc_html__('Add Custom Language', 'open-world-translate') ?></h3>
 					<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>">
 						<?php wp_nonce_field('ow_lang_action'); ?>
 						<input type="hidden" name="action" value="ow_lang_action">
 						<input type="hidden" name="ow_action" value="add_custom">
 						<p>
-							<label><?php echo esc_html__('Code (e.g. de, nl, zh)', 'open-world') ?></label><br>
+							<label><?php echo esc_html__('Code (e.g. de, nl, zh)', 'open-world-translate') ?></label><br>
 							<input type="text" name="lang_code" maxlength="10" style="width:100%">
 						</p>
 						<p>
-							<label><?php echo esc_html__('Locale (e.g. de_DE, en_US)', 'open-world') ?></label><br>
+							<label><?php echo esc_html__('Locale (e.g. de_DE, en_US)', 'open-world-translate') ?></label><br>
 							<input type="text" name="locale" maxlength="20" style="width:100%">
 						</p>
 						<p>
-							<label><?php echo esc_html__('Name (e.g. Deutsch)', 'open-world') ?></label><br>
+							<label><?php echo esc_html__('Name (e.g. Deutsch)', 'open-world-translate') ?></label><br>
 							<input type="text" name="lang_name" maxlength="100" style="width:100%">
 						</p>
 						<p>
-							<label><?php echo esc_html__('Flag emoji (optional)', 'open-world') ?></label><br>
+							<label><?php echo esc_html__('Flag emoji (optional)', 'open-world-translate') ?></label><br>
 							<input type="text" name="flag" maxlength="10" style="width:100%">
 						</p>
-						<button type="submit" class="button button-primary"><?php echo esc_html__('Add Custom Language', 'open-world') ?></button>
+						<button type="submit" class="button button-primary"><?php echo esc_html__('Add Custom Language', 'open-world-translate') ?></button>
 					</form>
 				</div>
 			</div>
@@ -695,7 +696,7 @@ class OW_Admin
 		$is_configured = OW_DeepL::is_configured();
 
 		if (empty($targets)) {
-			echo '<div class="wrap ow-wrap"><p>' . esc_html__('No target languages. Add languages first.', 'open-world') . '</p></div>';
+			echo '<div class="wrap ow-wrap"><p>' . esc_html__('No target languages. Add languages first.', 'open-world-translate') . '</p></div>';
 			return;
 		}
 
@@ -713,29 +714,29 @@ class OW_Admin
 			'nonce' => wp_create_nonce('ow_deepl_translate'),
 			'provider' => OW_Google_Free::is_enabled() ? 'google_free' : 'deepl',
 			'i18n' => [
-				'translating' => __('Translating...', 'open-world'),
-				'done' => __('Done!', 'open-world'),
-				'stopped' => __('Stopped.', 'open-world'),
-				'error' => __('Error:', 'open-world'),
-				'of' => __('of', 'open-world'),
-				'strings' => __('strings', 'open-world'),
-				'chars_used' => __('chars used', 'open-world'),
-				'no_untranslated' => __('No untranslated strings match these filters.', 'open-world'),
+				'translating' => __('Translating...', 'open-world-translate'),
+				'done' => __('Done!', 'open-world-translate'),
+				'stopped' => __('Stopped.', 'open-world-translate'),
+				'error' => __('Error:', 'open-world-translate'),
+				'of' => __('of', 'open-world-translate'),
+				'strings' => __('strings', 'open-world-translate'),
+				'chars_used' => __('chars used', 'open-world-translate'),
+				'no_untranslated' => __('No untranslated strings match these filters.', 'open-world-translate'),
 			],
 		]);
 		?>
 		<div class="wrap ow-wrap">
 			<div class="ow-page-header">
-				<img src="<?php echo esc_url(OW_PLUGIN_URL . 'assets/images/OpenWorldTransparentCompressed.png') ?>" alt="Open World" class="ow-logo">
+				<img src="<?php echo esc_url(OW_PLUGIN_URL . 'assets/images/OpenWorldTransparentCompressed.png') ?>" alt="Open World Translate" class="ow-logo">
 				<div class="ow-page-header-text">
-					<h1><?php echo esc_html__('Auto-Translate', 'open-world') ?></h1>
-					<p class="description"><?php echo esc_html__('Automatically translate all untranslated strings in your database using your preferred translation engine.', 'open-world') ?></p>
+					<h1><?php echo esc_html__('Auto-Translate', 'open-world-translate') ?></h1>
+					<p class="description"><?php echo esc_html__('Automatically translate all untranslated strings in your database using your preferred translation engine.', 'open-world-translate') ?></p>
 				</div>
 			</div>
 
 			<?php if (!$source_lang): ?>
 			<div class="notice notice-error" style="margin:12px 0">
-				<p><?php echo esc_html__('No source language set. Go to Languages and set one.', 'open-world') ?></p>
+				<p><?php echo esc_html__('No source language set. Go to Languages and set one.', 'open-world-translate') ?></p>
 			</div>
 			<?php endif; ?>
 
@@ -748,8 +749,8 @@ class OW_Admin
 
 			<!-- ── Provider Switcher ─────────────────────────────────────────── -->
 			<div class="ow-settings-card" style="margin-bottom:16px">
-				<h2><?php echo esc_html__('Translation Engine', 'open-world') ?></h2>
-				<p class="description" style="margin-bottom:14px"><?php echo esc_html__('Choose which engine translates your strings. The selection is saved instantly.', 'open-world') ?></p>
+				<h2><?php echo esc_html__('Translation Engine', 'open-world-translate') ?></h2>
+				<p class="description" style="margin-bottom:14px"><?php echo esc_html__('Choose which engine translates your strings. The selection is saved instantly.', 'open-world-translate') ?></p>
 
 				<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="ow-provider-cards">
 
@@ -762,10 +763,10 @@ class OW_Admin
 							<input type="radio" id="ow-provider-google" name="ow_provider" value="google_free"
 								<?php checked($active_provider, 'google_free') ?> style="margin-top:3px;width:16px;height:16px">
 							<div>
-								<strong style="font-size:1rem">🌐 <?php echo esc_html__('Google Translate', 'open-world') ?></strong>
-								<span style="display:inline-block;margin-left:6px;font-size:.72rem;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-radius:10px;padding:1px 8px"><?php echo esc_html__('Free', 'open-world') ?></span>
-								<p style="margin:6px 0 0;font-size:.82rem;color:#555"><?php echo esc_html__('No API key required. Unlimited characters. Powered by the same engine as translate.google.com. Ideal for getting started immediately.', 'open-world') ?></p>
-								<p style="margin:4px 0 0;font-size:.78rem;color:#888"><?php echo esc_html__('Note: unofficial endpoint — rate limited for large batches. Batches are intentionally small and paced.', 'open-world') ?></p>
+								<strong style="font-size:1rem">🌐 <?php echo esc_html__('Google Translate', 'open-world-translate') ?></strong>
+								<span style="display:inline-block;margin-left:6px;font-size:.72rem;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-radius:10px;padding:1px 8px"><?php echo esc_html__('Free', 'open-world-translate') ?></span>
+								<p style="margin:6px 0 0;font-size:.82rem;color:#555"><?php echo esc_html__('No API key required. Unlimited characters. Powered by the same engine as translate.google.com. Ideal for getting started immediately.', 'open-world-translate') ?></p>
+								<p style="margin:4px 0 0;font-size:.78rem;color:#888"><?php echo esc_html__('Note: unofficial endpoint — rate limited for large batches. Batches are intentionally small and paced.', 'open-world-translate') ?></p>
 							</div>
 						</div>
 					</label>
@@ -784,16 +785,16 @@ class OW_Admin
 								style="margin-top:3px;width:16px;height:16px">
 							<div>
 								<strong style="font-size:1rem">⚡ DeepL</strong>
-								<span style="display:inline-block;margin-left:6px;font-size:.72rem;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;border-radius:10px;padding:1px 8px"><?php echo $deepl_locked ? esc_html__('API key required', 'open-world') : esc_html__('Connected', 'open-world') ?></span>
-								<p style="margin:6px 0 0;font-size:.82rem;color:#555"><?php echo esc_html__('Professional-grade translations. Free plan: 500,000 chars/month. Pro plans for higher limits.', 'open-world') ?></p>
+								<span style="display:inline-block;margin-left:6px;font-size:.72rem;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;border-radius:10px;padding:1px 8px"><?php echo $deepl_locked ? esc_html__('API key required', 'open-world-translate') : esc_html__('Connected', 'open-world-translate') ?></span>
+								<p style="margin:6px 0 0;font-size:.82rem;color:#555"><?php echo esc_html__('Professional-grade translations. Free plan: 500,000 chars/month. Pro plans for higher limits.', 'open-world-translate') ?></p>
 								<?php if ($deepl_locked): ?>
 								<p style="margin:4px 0 0;font-size:.78rem;color:#d63638">
-									<?php echo esc_html__('Configure your API key in', 'open-world') ?>
-									<a href="<?php echo esc_url(admin_url('admin.php?page=ow-settings')) ?>"><?php echo esc_html__('Settings → DeepL API', 'open-world') ?></a>
-									<?php echo esc_html__('to enable DeepL.', 'open-world') ?>
+									<?php echo esc_html__('Configure your API key in', 'open-world-translate') ?>
+									<a href="<?php echo esc_url(admin_url('admin.php?page=ow-settings')) ?>"><?php echo esc_html__('Settings → DeepL API', 'open-world-translate') ?></a>
+									<?php echo esc_html__('to enable DeepL.', 'open-world-translate') ?>
 								</p>
 								<?php else: ?>
-								<p style="margin:4px 0 0;font-size:.78rem;color:#46b450"><?php echo esc_html__('✓ DeepL API key is configured and ready.', 'open-world') ?></p>
+								<p style="margin:4px 0 0;font-size:.78rem;color:#46b450"><?php echo esc_html__('✓ DeepL API key is configured and ready.', 'open-world-translate') ?></p>
 								<?php endif; ?>
 							</div>
 						</div>
@@ -824,7 +825,7 @@ class OW_Admin
 						r.addEventListener('change', async function(){
 							var val = this.value;
 							styleCards(val);
-							stat.textContent = '<?php echo esc_js(__('Saving…', 'open-world')) ?>';
+							stat.textContent = '<?php echo esc_js(__('Saving…', 'open-world-translate')) ?>';
 							stat.style.color = '#888';
 							// Update provider: google_free enabled = '1', deepl = '0'
 							var body = new URLSearchParams({
@@ -852,11 +853,11 @@ class OW_Admin
 									}
 
 									stat.textContent = '✓ ' + (val === 'google_free'
-										? '<?php echo esc_js(__('Using Google Translate (Free)', 'open-world')) ?>'
-										: '<?php echo esc_js(__('Using DeepL', 'open-world')) ?>');
+										? '<?php echo esc_js(__('Using Google Translate (Free)', 'open-world-translate')) ?>'
+										: '<?php echo esc_js(__('Using DeepL', 'open-world-translate')) ?>');
 									stat.style.color = '#46b450';
 								} else {
-									stat.textContent = '✗ <?php echo esc_js(__('Could not save.', 'open-world')) ?>';
+									stat.textContent = '✗ <?php echo esc_js(__('Could not save.', 'open-world-translate')) ?>';
 									stat.style.color = '#d63638';
 								}
 							} catch(e) {
@@ -871,11 +872,11 @@ class OW_Admin
 
 			<!-- ── Filters & Progress ────────────────────────────────────────── -->
 			<div class="ow-settings-card">
-				<h2><?php echo esc_html__('Translation Settings', 'open-world') ?></h2>
+				<h2><?php echo esc_html__('Translation Settings', 'open-world-translate') ?></h2>
 
 				<div class="ow-deepl-filters">
 					<div>
-						<label><strong><?php echo esc_html__('Target Language', 'open-world') ?></strong></label><br>
+						<label><strong><?php echo esc_html__('Target Language', 'open-world-translate') ?></strong></label><br>
 						<select id="ow-at-lang">
 							<?php foreach ($targets as $l): ?>
 							<option value="<?php echo esc_attr($l) ?>"><?php echo esc_html(($flags[$l] ?? '') . ' ' . ($names[$l] ?? $l)) ?></option>
@@ -884,9 +885,9 @@ class OW_Admin
 					</div>
 
 					<div>
-						<label><strong><?php echo esc_html__('Domain', 'open-world') ?></strong></label><br>
+						<label><strong><?php echo esc_html__('Domain', 'open-world-translate') ?></strong></label><br>
 						<select id="ow-at-domain">
-							<option value=""><?php echo esc_html__('All domains', 'open-world') ?></option>
+							<option value=""><?php echo esc_html__('All domains', 'open-world-translate') ?></option>
 							<?php foreach ($domains as $d): ?>
 							<option value="<?php echo esc_attr($d) ?>"><?php echo esc_html($d) ?></option>
 							<?php endforeach; ?>
@@ -894,9 +895,9 @@ class OW_Admin
 					</div>
 
 					<div>
-						<label><strong><?php echo esc_html__('Source Type', 'open-world') ?></strong></label><br>
+						<label><strong><?php echo esc_html__('Source Type', 'open-world-translate') ?></strong></label><br>
 						<select id="ow-at-source-type">
-							<option value=""><?php echo esc_html__('All types', 'open-world') ?></option>
+							<option value=""><?php echo esc_html__('All types', 'open-world-translate') ?></option>
 							<?php foreach ($source_types as $st): ?>
 							<option value="<?php echo esc_attr($st) ?>"><?php echo esc_html($st) ?></option>
 							<?php endforeach; ?>
@@ -904,9 +905,9 @@ class OW_Admin
 					</div>
 
 					<div>
-						<label><strong><?php echo esc_html__('Source', 'open-world') ?></strong></label><br>
+						<label><strong><?php echo esc_html__('Source', 'open-world-translate') ?></strong></label><br>
 						<select id="ow-at-source">
-							<option value=""><?php echo esc_html__('All sources', 'open-world') ?></option>
+							<option value=""><?php echo esc_html__('All sources', 'open-world-translate') ?></option>
 							<?php foreach ($sources as $src): ?>
 							<option value="<?php echo esc_attr($src) ?>"><?php echo esc_html($src) ?></option>
 							<?php endforeach; ?>
@@ -915,28 +916,28 @@ class OW_Admin
 				</div>
 
 				<div style="margin-top:16px">
-					<button type="button" class="button" id="ow-at-preview"><?php echo esc_html__('Preview', 'open-world') ?></button>
+					<button type="button" class="button" id="ow-at-preview"><?php echo esc_html__('Preview', 'open-world-translate') ?></button>
 					<span id="ow-at-preview-info" style="margin-left:8px;color:#666"></span>
 				</div>
 			</div>
 
 			<div class="ow-settings-card" style="margin-top:16px" id="ow-at-progress-card">
-				<h2><?php echo esc_html__('Translation Progress', 'open-world') ?></h2>
+				<h2><?php echo esc_html__('Translation Progress', 'open-world-translate') ?></h2>
 
 				<div class="ow-progress" style="margin:12px 0;height:24px;border-radius:4px">
 					<div class="ow-progress-bar" id="ow-at-progress-bar" style="width:0%;transition:width .3s;line-height:24px;text-align:center;color:#fff;font-size:.82rem"></div>
 				</div>
 
 				<p id="ow-at-status" style="margin:8px 0;font-size:.9rem;color:#555">
-					<?php echo esc_html__('Press "Start" to begin auto-translation.', 'open-world') ?>
+					<?php echo esc_html__('Press "Start" to begin auto-translation.', 'open-world-translate') ?>
 				</p>
 
 				<div style="display:flex;gap:8px;align-items:center;margin-top:12px">
 					<button type="button" class="button button-primary" id="ow-at-start" <?php echo ($active_provider === 'google_free' || $is_configured) && $source_lang ? '' : 'disabled' ?>>
-						<?php echo esc_html__('Start Translation', 'open-world') ?>
+						<?php echo esc_html__('Start Translation', 'open-world-translate') ?>
 					</button>
 					<button type="button" class="button" id="ow-at-stop" disabled>
-						<?php echo esc_html__('Stop', 'open-world') ?>
+						<?php echo esc_html__('Stop', 'open-world-translate') ?>
 					</button>
 				</div>
 
@@ -958,9 +959,9 @@ class OW_Admin
 		?>
 		<div class="wrap ow-wrap">
 			<div class="ow-page-header">
-				<img src="<?php echo esc_url(OW_PLUGIN_URL . 'assets/images/OpenWorldTransparentCompressed.png') ?>" alt="Open World" class="ow-logo">
+				<img src="<?php echo esc_url(OW_PLUGIN_URL . 'assets/images/OpenWorldTransparentCompressed.png') ?>" alt="Open World Translate" class="ow-logo">
 				<div class="ow-page-header-text">
-					<h1><?php echo esc_html__('Settings', 'open-world') ?></h1>
+					<h1><?php echo esc_html__('Settings', 'open-world-translate') ?></h1>
 				</div>
 			</div>
 
@@ -970,52 +971,52 @@ class OW_Admin
 
 			<div class="ow-settings-grid">
 				<div class="ow-settings-card">
-					<h2>🎯 <?php echo esc_html__('Smart Scan', 'open-world') ?> <span style="font-size:.75rem;font-weight:400;color:var(--ow-emerald)"><?php echo esc_html__('recommended', 'open-world') ?></span></h2>
-					<p class="description"><?php echo esc_html__('Crawls all published pages and auto-detected WooCommerce endpoints (shop, cart, checkout, account). Captures only strings that are actually rendered on the frontend — typically 200–500 strings instead of tens of thousands.', 'open-world') ?></p>
+					<h2>🎯 <?php echo esc_html__('Smart Scan', 'open-world-translate') ?> <span style="font-size:.75rem;font-weight:400;color:var(--ow-emerald)"><?php echo esc_html__('recommended', 'open-world-translate') ?></span></h2>
+					<p class="description"><?php echo esc_html__('Crawls all published pages and auto-detected WooCommerce endpoints (shop, cart, checkout, account). Captures only strings that are actually rendered on the frontend — typically 200–500 strings instead of tens of thousands.', 'open-world-translate') ?></p>
 					<p class="description" style="color:var(--ow-muted);font-size:.85em;margin-top:4px">
-						<?php echo esc_html__('Note: Page crawling requires a valid SSL certificate on your server to function properly.', 'open-world') ?>
+						<?php echo esc_html__('Note: Page crawling requires a valid SSL certificate on your server to function properly.', 'open-world-translate') ?>
 					</p>
 					<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>" style="margin-top:12px">
 						<?php wp_nonce_field('ow_scan_strings', 'ow_scan_nonce'); ?>
 						<input type="hidden" name="action" value="ow_scan_strings">
 						<input type="hidden" name="scan_mode" value="smart">
-						<button type="submit" class="button button-primary"><?php echo esc_html__('Run Smart Scan', 'open-world') ?></button>
+						<button type="submit" class="button button-primary"><?php echo esc_html__('Run Smart Scan', 'open-world-translate') ?></button>
 					</form>
 				</div>
 
 				<div class="ow-settings-card">
-					<h2>🛡️ <?php echo esc_html__('Scanner Security', 'open-world') ?></h2>
-					<p class="description"><?php echo esc_html__('Smart Scan crawls pages to find strings. It can forward your login cookies to accurately capture strings on restricted pages (e.g. My Account). If disabled, the scanner visits pages as a logged-out guest.', 'open-world') ?></p>
+					<h2>🛡️ <?php echo esc_html__('Scanner Security', 'open-world-translate') ?></h2>
+					<p class="description"><?php echo esc_html__('Smart Scan crawls pages to find strings. It can forward your login cookies to accurately capture strings on restricted pages (e.g. My Account). If disabled, the scanner visits pages as a logged-out guest.', 'open-world-translate') ?></p>
 					<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>" style="margin-top:12px">
 						<?php wp_nonce_field('ow_save_scanner_settings', 'ow_scanner_settings_nonce'); ?>
 						<input type="hidden" name="action" value="ow_save_scanner_settings">
 						<label>
 							<input type="checkbox" name="ow_forward_cookies" value="1" <?php checked(get_option('ow_forward_cookies', 'yes'), 'yes') ?>>
-							<strong><?php echo esc_html__('Forward essential session cookies during scans', 'open-world') ?></strong>
+							<strong><?php echo esc_html__('Forward essential session cookies during scans', 'open-world-translate') ?></strong>
 						</label>
 						<p class="description" style="margin-top:4px; margin-left:24px; font-size:.85em; color:var(--ow-muted)">
-							<?php echo esc_html__('Only WordPress authentication and WooCommerce session cookies are forwarded. Requires acceptance for strict security compliance.', 'open-world') ?>
+							<?php echo esc_html__('Only WordPress authentication and WooCommerce session cookies are forwarded. Requires acceptance for strict security compliance.', 'open-world-translate') ?>
 						</p>
-						<button type="submit" class="button" style="margin-top:12px"><?php echo esc_html__('Save Preferences', 'open-world') ?></button>
+						<button type="submit" class="button" style="margin-top:12px"><?php echo esc_html__('Save Preferences', 'open-world-translate') ?></button>
 					</form>
 				</div>
 
 				<div class="ow-settings-card">
-					<h2><?php echo esc_html__('Clean Unused Strings', 'open-world') ?></h2>
-					<p class="description"><?php echo esc_html__('Removes untranslated strings from previous full source scans that have no user translation. Already-translated strings are preserved.', 'open-world') ?></p>
+					<h2><?php echo esc_html__('Clean Unused Strings', 'open-world-translate') ?></h2>
+					<p class="description"><?php echo esc_html__('Removes untranslated strings from previous full source scans that have no user translation. Already-translated strings are preserved.', 'open-world-translate') ?></p>
 					<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>" style="margin-top:12px">
 						<?php wp_nonce_field('ow_clean_unused', 'ow_clean_nonce'); ?>
 						<input type="hidden" name="action" value="ow_clean_unused">
-						<button type="submit" class="button" onclick="return confirm('<?php echo esc_js(__('This will remove all untranslated strings from full source scans. Already-translated strings are preserved. Continue?', 'open-world')) ?>')"><?php echo esc_html__('Clean Unused Strings', 'open-world') ?></button>
+						<button type="submit" class="button" onclick="return confirm('<?php echo esc_js(__('This will remove all untranslated strings from full source scans. Already-translated strings are preserved. Continue?', 'open-world-translate')) ?>')"><?php echo esc_html__('Clean Unused Strings', 'open-world-translate') ?></button>
 					</form>
 					<hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
-					<p class="description" style="color:#d63638"><?php echo esc_html__('Warning: This will permanently delete ALL strings from the database, both translated and untranslated.', 'open-world') ?></p>
-									<button type="button" class="button button-link-delete" id="ow-delete-all-btn" style="margin-top:8px"><?php echo esc_html__('Delete ALL translations', 'open-world') ?></button>
+					<p class="description" style="color:#d63638"><?php echo esc_html__('Warning: This will permanently delete ALL strings from the database, both translated and untranslated.', 'open-world-translate') ?></p>
+									<button type="button" class="button button-link-delete" id="ow-delete-all-btn" style="margin-top:8px"><?php echo esc_html__('Delete ALL translations', 'open-world-translate') ?></button>
 				<div id="ow-delete-confirm" style="display:none;margin-top:10px;padding:12px;background:#fff8f8;border:1px solid #f5c6cb;border-radius:4px;">
-					<p style="margin:0 0 8px;font-size:.9em"><?php echo esc_html__('Type DELETE to confirm:', 'open-world') ?></p>
+					<p style="margin:0 0 8px;font-size:.9em"><?php echo esc_html__('Type DELETE to confirm:', 'open-world-translate') ?></p>
 					<input type="text" id="ow-delete-confirm-input" style="width:180px;margin-right:6px" placeholder="DELETE">
-					<button type="button" class="button button-link-delete" id="ow-delete-confirm-btn"><?php echo esc_html__('Confirm', 'open-world') ?></button>
-					<button type="button" class="button" id="ow-delete-cancel-btn"><?php echo esc_html__('Cancel', 'open-world') ?></button>
+					<button type="button" class="button button-link-delete" id="ow-delete-confirm-btn"><?php echo esc_html__('Confirm', 'open-world-translate') ?></button>
+					<button type="button" class="button" id="ow-delete-cancel-btn"><?php echo esc_html__('Cancel', 'open-world-translate') ?></button>
 					<p id="ow-delete-error" style="color:#d63638;margin:6px 0 0;font-size:.85em;display:none"></p>
 				</div>
 				<?php ob_start(); ?>
@@ -1045,18 +1046,18 @@ class OW_Admin
 
 					confirm.addEventListener('click', async function() {
 						if (input.value !== 'DELETE') {
-							error.innerText = '<?php echo esc_js(__('You must type EXACTLY: DELETE', 'open-world')) ?>';
+							error.innerText = '<?php echo esc_js(__('You must type EXACTLY: DELETE', 'open-world-translate')) ?>';
 							error.style.display = 'block';
 							return;
 						}
 
-						if (!window.confirm('<?php echo esc_js(__('FINAL WARNING: This is irreversible. Click OK to annihilate all translations from your database.', 'open-world')) ?>')) {
+						if (!window.confirm('<?php echo esc_js(__('FINAL WARNING: This is irreversible. Click OK to annihilate all translations from your database.', 'open-world-translate')) ?>')) {
 							return;
 						}
 
 						error.style.display = 'none';
 						confirm.disabled = true;
-						confirm.textContent = '<?php echo esc_js(__('Deleting...', 'open-world')) ?>';
+						confirm.textContent = '<?php echo esc_js(__('Deleting...', 'open-world-translate')) ?>';
 						
 						try {
 							const body = new URLSearchParams({
@@ -1072,13 +1073,13 @@ class OW_Admin
 								error.textContent = 'Error: ' + (d.data || 'Unknown error');
 								error.style.display = 'block';
 								confirm.disabled = false;
-								confirm.textContent = '<?php echo esc_js(__('Confirm', 'open-world')) ?>';
+								confirm.textContent = '<?php echo esc_js(__('Confirm', 'open-world-translate')) ?>';
 							}
 						} catch (e) {
-							error.textContent = '<?php echo esc_js(__('Network error. Try again.', 'open-world')) ?>';
+							error.textContent = '<?php echo esc_js(__('Network error. Try again.', 'open-world-translate')) ?>';
 							error.style.display = 'block';
 							confirm.disabled = false;
-							confirm.textContent = '<?php echo esc_js(__('Confirm', 'open-world')) ?>';
+							confirm.textContent = '<?php echo esc_js(__('Confirm', 'open-world-translate')) ?>';
 						}
 					});
 				})();
@@ -1087,53 +1088,53 @@ class OW_Admin
 				</div>
 
 				<div class="ow-settings-card">
-					<h2><?php echo esc_html__('Full Source Scan', 'open-world') ?> <span style="font-size:.75rem;font-weight:400;color:var(--ow-muted)"><?php echo esc_html__('advanced', 'open-world') ?></span></h2>
-					<p class="description"><?php echo esc_html__('Scans PHP source files and POT files for all gettext calls. Imports everything including admin-only strings. Can result in 10,000+ strings per source. Use only if you need complete coverage.', 'open-world') ?></p>
+					<h2><?php echo esc_html__('Full Source Scan', 'open-world-translate') ?> <span style="font-size:.75rem;font-weight:400;color:var(--ow-muted)"><?php echo esc_html__('advanced', 'open-world-translate') ?></span></h2>
+					<p class="description"><?php echo esc_html__('Scans PHP source files and POT files for all gettext calls. Imports everything including admin-only strings. Can result in 10,000+ strings per source. Use only if you need complete coverage.', 'open-world-translate') ?></p>
 					<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>" style="margin-top:12px">
 						<?php wp_nonce_field('ow_scan_strings', 'ow_scan_nonce'); ?>
 						<input type="hidden" name="action" value="ow_scan_strings">
 						<input type="hidden" name="scan_mode" value="full">
-						<label><input type="checkbox" name="scan_theme" value="1"> <?php echo esc_html__('Child theme', 'open-world') ?></label>
-						<label style="margin-left:12px"><input type="checkbox" name="scan_parent_theme" value="1"> <?php echo esc_html__('Parent theme', 'open-world') ?></label>
-						<label style="margin-left:12px"><input type="checkbox" name="scan_woocommerce" value="1"> <?php echo esc_html__('WooCommerce POT', 'open-world') ?> <span style="font-size:.75em;color:var(--ow-teal-dark)">(~14,000 strings)</span></label>
-						<label style="display: inline-flex;margin-top: 12px;gap: 4px;align-items: flex-end;"><input type="checkbox" name="scan_pages" value="1" checked> <?php echo esc_html__('Page crawl', 'open-world') ?> <span style="font-size:.75em;color:var(--ow-muted)">(<?php echo esc_html__('requires valid SSL', 'open-world') ?>)</span></label>
+						<label><input type="checkbox" name="scan_theme" value="1"> <?php echo esc_html__('Child theme', 'open-world-translate') ?></label>
+						<label style="margin-left:12px"><input type="checkbox" name="scan_parent_theme" value="1"> <?php echo esc_html__('Parent theme', 'open-world-translate') ?></label>
+						<label style="margin-left:12px"><input type="checkbox" name="scan_woocommerce" value="1"> <?php echo esc_html__('WooCommerce POT', 'open-world-translate') ?> <span style="font-size:.75em;color:var(--ow-teal-dark)">(~14,000 strings)</span></label>
+						<label style="display: inline-flex;margin-top: 12px;gap: 4px;align-items: flex-end;"><input type="checkbox" name="scan_pages" value="1" checked> <?php echo esc_html__('Page crawl', 'open-world-translate') ?> <span style="font-size:.75em;color:var(--ow-muted)">(<?php echo esc_html__('requires valid SSL', 'open-world-translate') ?>)</span></label>
 						<br><br>
-						<button type="submit" class="button"><?php echo esc_html__('Run Full Source Scan', 'open-world') ?></button>
+						<button type="submit" class="button"><?php echo esc_html__('Run Full Source Scan', 'open-world-translate') ?></button>
 					</form>
 				</div>
 
 				<div class="ow-settings-card">
-					<h2><?php echo esc_html__('Language Switcher Shortcodes', 'open-world') ?></h2>
-					<p class="description"><?php echo esc_html__('Copy a shortcode below and paste it into any page, post, or widget to display a language switcher.', 'open-world') ?></p>
+					<h2><?php echo esc_html__('Language Switcher Shortcodes', 'open-world-translate') ?></h2>
+					<p class="description"><?php echo esc_html__('Copy a shortcode below and paste it into any page, post, or widget to display a language switcher.', 'open-world-translate') ?></p>
 					<table class="widefat" style="margin-top:10px">
-						<thead><tr><th><?php echo esc_html__('Style', 'open-world') ?></th><th><?php echo esc_html__('Shortcode', 'open-world') ?></th><th><?php echo esc_html__('Description', 'open-world') ?></th></tr></thead>
+						<thead><tr><th><?php echo esc_html__('Style', 'open-world-translate') ?></th><th><?php echo esc_html__('Shortcode', 'open-world-translate') ?></th><th><?php echo esc_html__('Description', 'open-world-translate') ?></th></tr></thead>
 						<tbody>
-							<tr><td>Dropdown</td><td><code>[ow_language_switcher style="dropdown"]</code></td><td><?php echo esc_html__('Expandable dropdown menu', 'open-world') ?></td></tr>
-							<tr><td>Flags</td><td><code>[ow_language_switcher style="flags"]</code></td><td><?php echo esc_html__('Flag emojis inline', 'open-world') ?></td></tr>
-							<tr><td>Codes</td><td><code>[ow_language_switcher style="codes"]</code></td><td><?php echo esc_html__('Compact language codes: PL EN DE', 'open-world') ?></td></tr>
-							<tr><td>List</td><td><code>[ow_language_switcher style="list"]</code></td><td><?php echo esc_html__('Flags + full names inline', 'open-world') ?></td></tr>
+							<tr><td>Dropdown</td><td><code>[ow_language_switcher style="dropdown"]</code></td><td><?php echo esc_html__('Expandable dropdown menu', 'open-world-translate') ?></td></tr>
+							<tr><td>Flags</td><td><code>[ow_language_switcher style="flags"]</code></td><td><?php echo esc_html__('Flag emojis inline', 'open-world-translate') ?></td></tr>
+							<tr><td>Codes</td><td><code>[ow_language_switcher style="codes"]</code></td><td><?php echo esc_html__('Compact language codes: PL EN DE', 'open-world-translate') ?></td></tr>
+							<tr><td>List</td><td><code>[ow_language_switcher style="list"]</code></td><td><?php echo esc_html__('Flags + full names inline', 'open-world-translate') ?></td></tr>
 						</tbody>
 					</table>
-					<p class="description" style="margin-top:8px"><?php echo esc_html__('To place the switcher, use one of the shortcodes above, or add the "Language Switcher" widget in Appearance → Widgets. The switcher is never injected automatically — you decide where it appears.', 'open-world') ?></p>
+					<p class="description" style="margin-top:8px"><?php echo esc_html__('To place the switcher, use one of the shortcodes above, or add the "Language Switcher" widget in Appearance → Widgets. The switcher is never injected automatically — you decide where it appears.', 'open-world-translate') ?></p>
 				</div>
 
 				<div class="ow-settings-card">
-					<h2><?php echo esc_html__( 'Browser Language Detection', 'open-world' ) ?></h2>
-					<p class="description"><?php echo esc_html__( 'Automatically detects the visitor\'s preferred language from their browser on first visit and redirects them to the matching language version. After the first visit, the preference is remembered via a cookie (ow_lang_pref) for one year. If the visitor manually switches language, the cookie is updated to reflect their choice.', 'open-world' ) ?></p>
+					<h2><?php echo esc_html__( 'Browser Language Detection', 'open-world-translate' ) ?></h2>
+					<p class="description"><?php echo esc_html__( 'Automatically detects the visitor\'s preferred language from their browser on first visit and redirects them to the matching language version. After the first visit, the preference is remembered via a cookie (ow_lang_pref) for one year. If the visitor manually switches language, the cookie is updated to reflect their choice.', 'open-world-translate' ) ?></p>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ) ?>" style="margin-top:12px">
 						<?php wp_nonce_field( 'ow_save_browser_detect_settings', 'ow_browser_detect_nonce' ); ?>
 						<input type="hidden" name="action" value="ow_save_browser_detect_settings">
 						<label>
 							<input type="checkbox" name="ow_browser_detect_enabled" value="1" <?php checked( (int) get_option( 'ow_browser_detect_enabled', 1 ), 1 ) ?>>
-							<strong><?php echo esc_html__( 'Enable browser language auto-detection', 'open-world' ) ?></strong>
+							<strong><?php echo esc_html__( 'Enable browser language auto-detection', 'open-world-translate' ) ?></strong>
 						</label>
-						<button type="submit" class="button" style="margin-top:12px; display:block"><?php echo esc_html__( 'Save', 'open-world' ) ?></button>
+						<button type="submit" class="button" style="margin-top:12px; display:block"><?php echo esc_html__( 'Save', 'open-world-translate' ) ?></button>
 					</form>
 				</div>
 
 				<div class="ow-settings-card" style="grid-column: span 2;">
-					<h2><?php echo esc_html__('Link Rewriting Exclusions', 'open-world') ?></h2>
-					<p class="description"><?php echo esc_html__('Enter specific URLs or paths that should never be translated or rewritten by the language router (one per line).', 'open-world') ?></p>
+					<h2><?php echo esc_html__('Link Rewriting Exclusions', 'open-world-translate') ?></h2>
+					<p class="description"><?php echo esc_html__('Enter specific URLs or paths that should never be translated or rewritten by the language router (one per line).', 'open-world-translate') ?></p>
 					<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>" style="margin-top:12px">
 						<?php wp_nonce_field('ow_save_rewrite_settings', 'ow_rewrite_settings_nonce'); ?>
 						<input type="hidden" name="action" value="ow_save_rewrite_settings">
@@ -1141,54 +1142,54 @@ class OW_Admin
 https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('ow_rewrite_exclusions', '')); ?></textarea>
 						
 						<p class="description" style="margin-top:8px; font-size:.85em;">
-							<strong><?php echo esc_html__('Developer Tip:', 'open-world') ?></strong> <?php echo esc_html__('You can also instantly exclude any link directly in your HTML templates by adding the', 'open-world') ?> <code>data-no-rewrite="1"</code> <?php echo esc_html__('attribute to the', 'open-world') ?> <code>&lt;a&gt;</code> <?php echo esc_html__('tag.', 'open-world') ?>
+							<strong><?php echo esc_html__('Developer Tip:', 'open-world-translate') ?></strong> <?php echo esc_html__('You can also instantly exclude any link directly in your HTML templates by adding the', 'open-world-translate') ?> <code>data-no-rewrite="1"</code> <?php echo esc_html__('attribute to the', 'open-world-translate') ?> <code>&lt;a&gt;</code> <?php echo esc_html__('tag.', 'open-world-translate') ?>
 						</p>
 
 						<details style="margin-top:16px; background:#f9f9f9; padding:10px; border:1px solid #ddd; border-radius:4px;">
-							<summary style="cursor:pointer; font-weight:600; font-size:.9em; color:#555;"><?php echo esc_html__('View Default Excluded Paths', 'open-world') ?></summary>
+							<summary style="cursor:pointer; font-weight:600; font-size:.9em; color:#555;"><?php echo esc_html__('View Default Excluded Paths', 'open-world-translate') ?></summary>
 							<div style="margin-top:8px; font-size:.85em; color:#666; line-height:1.5;">
-								<?php echo esc_html__('The following are safely excluded by default and do not need to be added above:', 'open-world') ?>
+								<?php echo esc_html__('The following are safely excluded by default and do not need to be added above:', 'open-world-translate') ?>
 								<ul style="list-style:disc; margin-left:20px; margin-top:4px;">
 									<li><code>wp-admin</code>, <code>wp-login.php</code>, <code>wp-json</code></li>
 									<li><code>feed</code>, <code>sitemap.xml</code></li>
 									<li><code>wc-ajax=</code> (WooCommerce endpoints)</li>
 									<li><code>mailto:</code>, <code>tel:</code>, <code>javascript:</code>, <code>data:</code></li>
-									<li><?php echo esc_html__('External URLs with a different origin domain', 'open-world') ?></li>
+									<li><?php echo esc_html__('External URLs with a different origin domain', 'open-world-translate') ?></li>
 								</ul>
 							</div>
 						</details>
 
-						<button type="submit" class="button" style="margin-top:16px"><?php echo esc_html__('Save Exclusions', 'open-world') ?></button>
+						<button type="submit" class="button" style="margin-top:16px"><?php echo esc_html__('Save Exclusions', 'open-world-translate') ?></button>
 					</form>
 				</div>
 
 				<div class="ow-settings-card ow-deepl-settings-card">
-				<h2><?php echo esc_html__('DeepL API — Auto-Translation', 'open-world') ?></h2>
+				<h2><?php echo esc_html__('DeepL API — Auto-Translation', 'open-world-translate') ?></h2>
 				<p class="description">
-					<?php echo esc_html__('Connect DeepL for automatic translation.', 'open-world') ?>
-					<a href="https://www.deepl.com/pro-api" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Create free account →', 'open-world') ?></a>
+					<?php echo esc_html__('Connect DeepL for automatic translation.', 'open-world-translate') ?>
+					<a href="https://www.deepl.com/pro-api" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Create free account →', 'open-world-translate') ?></a>
 				</p>
-				<p class="description" style="color:#888;margin-top:2px"><?php echo esc_html__('Free plan: 500,000 chars/month. Pro plans available for higher limits.', 'open-world') ?></p>
+				<p class="description" style="color:#888;margin-top:2px"><?php echo esc_html__('Free plan: 500,000 chars/month. Pro plans available for higher limits.', 'open-world-translate') ?></p>
 
 				<?php $deepl_key = OW_DeepL::get_api_key();
 				$deepl_plan = get_option(OW_DeepL::OPTION_PLAN, 'free'); ?>
 
 				<div style="margin-top:12px">
-					<label><strong><?php echo esc_html__('API Key', 'open-world') ?></strong></label><br>
-					<input type="password" id="ow-deepl-key" value="<?php echo esc_attr($deepl_key) ?>" style="width:100%;margin-top:4px" placeholder="<?php echo esc_attr__('Paste your DeepL API key here', 'open-world') ?>">
+					<label><strong><?php echo esc_html__('API Key', 'open-world-translate') ?></strong></label><br>
+					<input type="password" id="ow-deepl-key" value="<?php echo esc_attr($deepl_key) ?>" style="width:100%;margin-top:4px" placeholder="<?php echo esc_attr__('Paste your DeepL API key here', 'open-world-translate') ?>">
 				</div>
 				<div style="margin-top:10px">
-					<label><strong><?php echo esc_html__('Plan', 'open-world') ?></strong></label><br>
+					<label><strong><?php echo esc_html__('Plan', 'open-world-translate') ?></strong></label><br>
 					<label style="margin-right:14px"><input type="radio" name="ow_deepl_plan" value="free" <?php echo checked($deepl_plan, 'free', false) ?>> Free <code style="font-size:.78rem">api-free.deepl.com</code></label>
 					<label><input type="radio" name="ow_deepl_plan" value="pro" <?php echo checked($deepl_plan, 'pro', false) ?>> Pro <code style="font-size:.78rem">api.deepl.com</code></label>
 				</div>
 				<div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-					<button type="button" class="button" id="ow-deepl-save"><?php echo esc_html__('Save &amp; Test Connection', 'open-world') ?></button>
-					<a href="<?php echo esc_url(admin_url('admin.php?page=ow-auto-translate')) ?>" class="button"><?php echo esc_html__('Open Auto-Translate', 'open-world') ?></a>
+					<button type="button" class="button" id="ow-deepl-save"><?php echo esc_html__('Save &amp; Test Connection', 'open-world-translate') ?></button>
+					<a href="<?php echo esc_url(admin_url('admin.php?page=ow-auto-translate')) ?>" class="button"><?php echo esc_html__('Open Auto-Translate', 'open-world-translate') ?></a>
 					<span id="ow-deepl-status" style="font-weight:600"></span>
 				</div>
 				<div id="ow-deepl-usage" style="margin-top:10px;display:<?php echo $deepl_key ? 'block' : 'none' ?>">
-					<label><strong><?php echo esc_html__('Usage this month', 'open-world') ?></strong></label>
+					<label><strong><?php echo esc_html__('Usage this month', 'open-world-translate') ?></strong></label>
 					<div class="ow-progress" style="margin-top:4px"><div class="ow-progress-bar" id="ow-deepl-usage-bar" style="width:0%"></div></div>
 					<span id="ow-deepl-usage-text" class="description"></span>
 				</div>
@@ -1198,7 +1199,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 					if(!btn)return;
 					btn.addEventListener('click',async function(){
 						var key=document.getElementById('ow-deepl-key').value,plan=document.querySelector('input[name="ow_deepl_plan"]:checked').value;
-						stat.textContent='<?php echo esc_js(__('Testing…', 'open-world')) ?>';stat.style.color='#888';btn.disabled=true;
+						stat.textContent='<?php echo esc_js(__('Testing…', 'open-world-translate')) ?>';stat.style.color='#888';btn.disabled=true;
 						var body=new URLSearchParams({action:'ow_deepl_save_settings',api_key:key,plan:plan,_ajax_nonce:'<?php echo esc_attr(wp_create_nonce('ow_deepl_settings')) ?>'});
 						try{
 							var r=await fetch(ajaxurl,{method:'POST',credentials:'same-origin',body:body}),d=await r.json();
@@ -1212,20 +1213,20 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 				</div>
 
 				<div class="ow-settings-card ow-google-free-settings-card">
-				<h2><?php echo esc_html__('Google Translate — Free Auto-Translation', 'open-world') ?></h2>
+				<h2><?php echo esc_html__('Google Translate — Free Auto-Translation', 'open-world-translate') ?></h2>
 				<p class="description">
-					<?php echo esc_html__('Translate strings automatically using Google Translate — no API key required.', 'open-world') ?>
+					<?php echo esc_html__('Translate strings automatically using Google Translate — no API key required.', 'open-world-translate') ?>
 				</p>
-				<p class="description" style="color:#888;margin-top:2px"><?php echo esc_html__('Batches are sent thoughtfully to avoid rate limits. Unlimited characters.', 'open-world') ?></p>
+				<p class="description" style="color:#888;margin-top:2px"><?php echo esc_html__('Batches are sent thoughtfully to avoid rate limits. Unlimited characters.', 'open-world-translate') ?></p>
 
 				<div style="margin-top:12px">
-					<a href="<?php echo esc_url(admin_url('admin.php?page=ow-auto-translate')) ?>" class="button"><?php echo esc_html__('Open Auto-Translate', 'open-world') ?></a>
+					<a href="<?php echo esc_url(admin_url('admin.php?page=ow-auto-translate')) ?>" class="button"><?php echo esc_html__('Open Auto-Translate', 'open-world-translate') ?></a>
 				</div>
 				</div>
 
 				<div class="ow-settings-card">
-					<h2><?php echo esc_html__('Import PO File', 'open-world') ?></h2>
-					<p class="description"><?php echo esc_html__('Upload a .po file to bulk-import translations for a specific language and domain.', 'open-world') ?></p>
+					<h2><?php echo esc_html__('Import PO File', 'open-world-translate') ?></h2>
+					<p class="description"><?php echo esc_html__('Upload a .po file to bulk-import translations for a specific language and domain.', 'open-world-translate') ?></p>
 					<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')) ?>" enctype="multipart/form-data">
 						<?php wp_nonce_field('ow_import_po', 'ow_import_nonce'); ?>
 						<input type="hidden" name="action" value="ow_import_po">
@@ -1234,21 +1235,21 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 							<option value="<?php echo esc_attr($l) ?>"><?php echo esc_html(OW_Languages::get_flag($l) . ' ' . OW_Languages::get_name($l)) ?></option>
 							<?php endforeach; ?>
 						</select><br>
-						<input type="text" name="import_domain" placeholder="<?php echo esc_attr__('domain (e.g. woocommerce, generatepress)', 'open-world') ?>" style="width:100%;margin-top:8px"><br><br>
+						<input type="text" name="import_domain" placeholder="<?php echo esc_attr__('domain (e.g. woocommerce, generatepress)', 'open-world-translate') ?>" style="width:100%;margin-top:8px"><br><br>
 						<input type="file" name="po_file" accept=".po"><br><br>
-						<button type="submit" class="button button-primary"><?php echo esc_html__('Import', 'open-world') ?></button>
+						<button type="submit" class="button button-primary"><?php echo esc_html__('Import', 'open-world-translate') ?></button>
 					</form>
 				</div>
 
 				<div class="ow-settings-card">
-					<h2><?php echo esc_html__('Export PO File', 'open-world') ?></h2>
-					<p class="description"><?php echo esc_html__('Download translations as .po files. Each button represents a domain (text source):', 'open-world') ?></p>
+					<h2><?php echo esc_html__('Export PO File', 'open-world-translate') ?></h2>
+					<p class="description"><?php echo esc_html__('Download translations as .po files. Each button represents a domain (text source):', 'open-world-translate') ?></p>
 					<ul class="ow-domain-legend">
-						<li><strong>default</strong> — <?php echo esc_html__('WordPress core strings', 'open-world') ?></li>
-						<li><strong>open-world</strong> — <?php echo esc_html__("this plugin's own UI strings", 'open-world') ?></li>
-						<li><strong>woocommerce</strong> — <?php echo esc_html__('WooCommerce shop strings', 'open-world') ?></li>
-						<li><strong>generatepress</strong> — <?php echo esc_html__('parent theme strings', 'open-world') ?></li>
-						<li><strong>generatepress-child</strong> — <?php echo esc_html__('your child theme strings', 'open-world') ?></li>
+						<li><strong>default</strong> — <?php echo esc_html__('WordPress core strings', 'open-world-translate') ?></li>
+						<li><strong>open-world</strong> — <?php echo esc_html__("this plugin's own UI strings", 'open-world-translate') ?></li>
+						<li><strong>woocommerce</strong> — <?php echo esc_html__('WooCommerce shop strings', 'open-world-translate') ?></li>
+						<li><strong>generatepress</strong> — <?php echo esc_html__('parent theme strings', 'open-world-translate') ?></li>
+						<li><strong>generatepress-child</strong> — <?php echo esc_html__('your child theme strings', 'open-world-translate') ?></li>
 					</ul>
 					<?php foreach (OW_Languages::get_target_languages() as $l): ?>
 					<div style="padding: 7px; min-height:26px; border-bottom: 1px solid #EFEFEF;">
@@ -1298,19 +1299,19 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 		check_ajax_referer('ow_set_lang_status_' . $lang_code, 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(__('Unauthorized', 'open-world'), 403);
+			wp_send_json_error(__('Unauthorized', 'open-world-translate'), 403);
 		}
 
 		$status = sanitize_key(wp_unslash($_POST['status'] ?? ''));
 
 		if (!in_array($status, ['active', 'pending', 'inactive'], true)) {
-			wp_send_json_error(__('Invalid status value.', 'open-world'));
+			wp_send_json_error(__('Invalid status value.', 'open-world-translate'));
 		}
 
 		$ok = OW_Languages::set_status($lang_code, $status);
 
 		if (!$ok) {
-			wp_send_json_error(__('Could not update status. Default and Source languages must stay active.', 'open-world'));
+			wp_send_json_error(__('Could not update status. Default and Source languages must stay active.', 'open-world-translate'));
 		}
 
 		wp_send_json_success(['lang' => $lang_code, 'status' => $status]);
@@ -1330,13 +1331,13 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 		OW_DeepL::save_settings($key, $plan);
 
 		if (!$key) {
-			wp_send_json_success(['message' => __('API key cleared.', 'open-world'), 'usage' => null]);
+			wp_send_json_success(['message' => __('API key cleared.', 'open-world-translate'), 'usage' => null]);
 		}
 
 		$result = OW_DeepL::test_connection();
 		if ($result['ok']) {
 			wp_send_json_success([
-				'message' => __('Connected successfully!', 'open-world'),
+				'message' => __('Connected successfully!', 'open-world-translate'),
 				'usage' => [
 					'character_count' => $result['character_count'],
 					'character_limit' => $result['character_limit'],
@@ -1437,25 +1438,25 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 				OW_Languages::set_default($lang);
 				OW_Router::flush_rules();
 				/* translators: %s: language code */
-				set_transient('ow_lang_notice', sprintf(__('Default URL language set to: %s', 'open-world'), $lang), 60);
+				set_transient('ow_lang_notice', sprintf(__('Default URL language set to: %s', 'open-world-translate'), $lang), 60);
 				break;
 
 			case 'set_source':
 				OW_Languages::set_source($lang);
 				/* translators: %s: language code */
-				set_transient('ow_lang_notice', sprintf(__('Source language set to: %s. Re-scan strings if content language changed.', 'open-world'), $lang), 60);
+				set_transient('ow_lang_notice', sprintf(__('Source language set to: %s. Re-scan strings if content language changed.', 'open-world-translate'), $lang), 60);
 				break;
 
 			case 'set_fallback':
 				OW_Languages::set_fallback($lang);
 				/* translators: %s: language code */
-				set_transient('ow_lang_notice', sprintf(__('Fallback language changed to: %s', 'open-world'), $lang), 60);
+				set_transient('ow_lang_notice', sprintf(__('Fallback language changed to: %s', 'open-world-translate'), $lang), 60);
 				break;
 
 			case 'remove':
 				OW_Languages::remove($lang);
 				/* translators: %s: language code */
-				set_transient('ow_lang_notice', sprintf(__('Language removed: %s', 'open-world'), $lang), 60);
+				set_transient('ow_lang_notice', sprintf(__('Language removed: %s', 'open-world-translate'), $lang), 60);
 				break;
 
 			case 'add_known':
@@ -1465,7 +1466,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 					$code = OW_Languages::locale_to_code($locale);
 					OW_Languages::add($code, $locale, $known[$locale]['name'], $known[$locale]['flag']);
 					/* translators: %s: language name */
-					set_transient('ow_lang_notice', sprintf(__('Language added: %s', 'open-world'), $known[$locale]['name']), 60);
+					set_transient('ow_lang_notice', sprintf(__('Language added: %s', 'open-world-translate'), $known[$locale]['name']), 60);
 				}
 				break;
 
@@ -1477,7 +1478,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 				if ($code && $locale && $name) {
 					OW_Languages::add($code, $locale, $name, $flag);
 					/* translators: %s: language name */
-					set_transient('ow_lang_notice', sprintf(__('Language added: %s', 'open-world'), $name), 60);
+					set_transient('ow_lang_notice', sprintf(__('Language added: %s', 'open-world-translate'), $name), 60);
 				}
 				break;
 		}
@@ -1502,7 +1503,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 		if ($scan_mode === 'smart') {
 			// Smart Scan: crawl rendered pages only
 			$total = $scanner->scan_smart();
-			$label = __('Smart Scan', 'open-world');
+			$label = __('Smart Scan', 'open-world-translate');
 		} else {
 			// Full Source Scan: legacy per-source checkboxes
 			if (!empty($_POST['scan_theme'])) {
@@ -1517,12 +1518,12 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 			if (!empty($_POST['scan_pages'])) {
 				$total += $scanner->scan_all_pages();
 			}
-			$label = __('Full Source Scan', 'open-world');
+			$label = __('Full Source Scan', 'open-world-translate');
 		}
 
 		set_transient('ow_last_scan_result', sprintf(
 			/* translators: %1$s = scan type, %2$d = count */
-			__('%1$s complete: %2$d new strings added.', 'open-world'),
+			__('%1$s complete: %2$d new strings added.', 'open-world-translate'),
 			$label,
 			$total
 		), 60);
@@ -1539,7 +1540,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 		$forward_cookies = !empty($_POST['ow_forward_cookies']) ? 'yes' : 'no';
 		update_option('ow_forward_cookies', $forward_cookies);
 
-		set_transient('ow_last_scan_result', __('Scanner security preferences saved.', 'open-world'), 60);
+		set_transient('ow_last_scan_result', __('Scanner security preferences saved.', 'open-world-translate'), 60);
 		wp_safe_redirect(admin_url('admin.php?page=ow-settings'));
 		exit;
 	}
@@ -1556,7 +1557,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 
 		update_option('ow_rewrite_exclusions', $clean_exclusions);
 
-		set_transient('ow_last_scan_result', __('Link rewriting exclusions saved.', 'open-world'), 60);
+		set_transient('ow_last_scan_result', __('Link rewriting exclusions saved.', 'open-world-translate'), 60);
 		wp_safe_redirect(admin_url('admin.php?page=ow-settings'));
 		exit;
 	}
@@ -1570,7 +1571,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 		$enabled = ! empty( $_POST['ow_browser_detect_enabled'] ) ? 1 : 0;
 		update_option( 'ow_browser_detect_enabled', $enabled );
 
-		set_transient( 'ow_last_scan_result', __( 'Browser language detection settings saved.', 'open-world' ), 60 );
+		set_transient( 'ow_last_scan_result', __( 'Browser language detection settings saved.', 'open-world-translate' ), 60 );
 		wp_safe_redirect( admin_url( 'admin.php?page=ow-settings' ) );
 		exit;
 	}
@@ -1585,7 +1586,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 
 		set_transient('ow_last_scan_result', sprintf(
 			/* translators: %d: number of deleted strings */
-			__('Cleaned: %d unused strings removed.', 'open-world'),
+			__('Cleaned: %d unused strings removed.', 'open-world-translate'),
 			$deleted
 		), 60);
 		wp_safe_redirect(admin_url('admin.php?page=ow-settings'));
@@ -1637,7 +1638,7 @@ https://example.com/api" spellcheck="false"><?php echo esc_textarea(get_option('
 
 		set_transient('ow_last_scan_result', sprintf(
 			/* translators: 1: translations count, 2: language code, 3: text domain */
-			__('Imported %1$d translations for %2$s (%3$s).', 'open-world'),
+			__('Imported %1$d translations for %2$s (%3$s).', 'open-world-translate'),
 			$count, $lang, $domain
 		), 60);
 		wp_safe_redirect(admin_url('admin.php?page=ow-settings'));
