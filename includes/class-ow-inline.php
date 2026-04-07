@@ -153,13 +153,34 @@ class OW_Inline {
 		// JS will use this to find DOM text nodes and make them clickable
 		$string_map = [];
 		foreach ( $this->collected as $entry ) {
-			$t = trim( $entry['translation'] );
-			if ( strlen( $t ) < 2 ) continue;
-			// Use the displayed translation text as the lookup key
-			$string_map[ $t ] = [
+			$msgid = trim( $entry['msgid'] );
+			$trans = trim( $entry['translation'] );
+			if ( strlen( $msgid ) < 2 ) continue;
+			
+			$map_entry = [
 				'msgid'  => $entry['msgid'],
 				'domain' => $entry['domain'],
 			];
+			
+			// If key already exists, prefer custom domains over 'default'
+			$should_assign = function( $key ) use ( &$string_map, $map_entry ) {
+				if ( ! isset( $string_map[ $key ] ) ) {
+					return true;
+				}
+				if ( $string_map[ $key ]['domain'] === 'default' && $map_entry['domain'] !== 'default' ) {
+					return true;
+				}
+				return false;
+			};
+			
+			// Key by translation (what is visually rendered on page)
+			if ( strlen( $trans ) >= 2 && $should_assign( $trans ) ) {
+				$string_map[ $trans ] = $map_entry;
+			}
+			// Also key by msgid if different (source language fallback)
+			if ( $msgid !== $trans && strlen( $msgid ) >= 2 && $should_assign( $msgid ) ) {
+				$string_map[ $msgid ] = $map_entry;
+			}
 		}
 		?>
 		<div id="ow-inline-sidebar" class="ow-sidebar">
@@ -189,7 +210,11 @@ class OW_Inline {
 			</div>
 		</div>
 		<?php
-		wp_add_inline_script( 'ow-inline-editor', 'window.owInlineLanguages = ' . wp_json_encode( $languages ) . '; window.owStringMap = ' . wp_json_encode( $string_map, JSON_UNESCAPED_UNICODE ) . ';' );
+		wp_add_inline_script( 'ow-inline-editor',
+			'window.owInlineLanguages = ' . wp_json_encode( $languages ) . ';' .
+			' window.owStringMap = ' . wp_json_encode( $string_map, JSON_UNESCAPED_UNICODE ) . ';' .
+			' console.log("[OW] Collected strings:", Object.keys(window.owStringMap).length);'
+		);
 	}
 
 	// ── AJAX Handlers ────────────────────────────────────────────────────────

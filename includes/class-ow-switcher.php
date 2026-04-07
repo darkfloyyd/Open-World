@@ -136,7 +136,7 @@ class OW_Switcher {
 		.ow-switcher--list .ow-switcher__link { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; text-decoration: none; color: inherit; border-radius: 3px; transition: background .15s; }
 		.ow-switcher__link--active { font-weight: 700; }
 		';
-		wp_register_style( 'ow-switcher', false );
+		wp_register_style( 'ow-switcher', false, [], OW_VERSION );
 		wp_enqueue_style( 'ow-switcher' );
 		wp_add_inline_style( 'ow-switcher', $css );
 	}

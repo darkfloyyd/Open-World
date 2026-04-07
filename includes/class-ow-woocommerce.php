@@ -158,7 +158,7 @@ class OW_WooCommerce {
 		if ( ! in_array( $hook, [ 'post.php', 'post-new.php' ], true ) ) return;
 		if ( ! $post || 'product' !== $post->post_type ) return;
 
-		wp_register_script( 'ow-wc-admin', false, [ 'jquery' ], false, true );
+		wp_register_script( 'ow-wc-admin', false, [ 'jquery' ], OW_VERSION, true );
 		wp_enqueue_script( 'ow-wc-admin' );
 		wp_add_inline_script( 'ow-wc-admin', '
 		document.addEventListener("DOMContentLoaded", function() {
@@ -174,7 +174,7 @@ class OW_WooCommerce {
 		});
 		' );
 
-		wp_register_style( 'ow-wc-admin', false );
+		wp_register_style( 'ow-wc-admin', false, [], OW_VERSION );
 		wp_enqueue_style( 'ow-wc-admin' );
 		wp_add_inline_style( 'ow-wc-admin', '
 		.ow-product-tab-nav { margin-bottom: 12px; }

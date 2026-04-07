@@ -276,7 +276,7 @@ class OW_Router {
 
 		// Never redirect POST requests — redirecting would convert POST to GET,
 		// silently discarding all form data (e.g. return form, checkout, contact forms).
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) && strtoupper( $_SERVER['REQUEST_METHOD'] ) === 'POST' ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && strtoupper( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) === 'POST' ) {
 			return;
 		}
 

@@ -4,7 +4,7 @@
  * Plugin Name:       Open World Translate
  * Plugin URI:        https://github.com/open-world-project/open-world-translate
  * Description:       Multilingual solution — dynamic strings, WooCommerce integration, URL-based language switcher for free.
- * Version:           1.1.5
+ * Version:           1.1.6
  * Tested up to:      6.9
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -12,14 +12,14 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Author:            Jakub Misiak
  * Author URI:        https://buymeacoffee.com/jakubmisiak
- * Text Domain:       open-world
+ * Text Domain:       open-world-translate
  */
 if (!defined('ABSPATH')) {
 	exit;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-define('OW_VERSION', '1.1.5');
+define('OW_VERSION', '1.1.6');
 define('OW_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('OW_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('OW_PLUGIN_FILE', __FILE__);
