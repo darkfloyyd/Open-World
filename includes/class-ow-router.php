@@ -121,6 +121,21 @@ class OW_Router {
 			// Original match e.g. "product/([^/]+)/?$" -> "^(pl|fr)/product/([^/]+)/?$"
 			$new_match = '^(' . $lang_regex . ')/' . ltrim( $match, '^' );
 
+			// If original rule points to WooCommerce shop page (page_id=X),
+			// replace with post_type=product so WordPress never sees page_id
+			// alongside post_type=product, which causes redirect_canonical to
+			// redirect shop archive URLs (/fr/shop/) to the front page.
+			if ( function_exists( 'wc_get_page_id' ) ) {
+				$shop_page_id = (int) wc_get_page_id( 'shop' );
+				if ( $shop_page_id > 0 && strpos( $new_query, 'page_id=' . $shop_page_id ) !== false ) {
+					$new_query = str_replace(
+						'page_id=' . $shop_page_id,
+						'post_type=product',
+						$new_query
+					);
+				}
+			}
+
 			$new_rules[ $new_match ] = $new_query;
 		}
 
@@ -146,19 +161,24 @@ class OW_Router {
 			return $query_vars;
 		}
 
-		// Store detected language in static cache
 		self::$current_lang = $lang;
 
-		// If only ow_lang is set (no pagename) → front page
-		if ( empty( $query_vars['pagename'] ) && empty( $query_vars['page_id'] ) && empty( $query_vars['p'] ) && empty( $query_vars['name'] ) ) {
-			// Tell WP to load the front page
+		if ( isset( $query_vars['post_type'] ) && $query_vars['post_type'] === 'product' ) {
+			unset( $query_vars['page_id'] );
+			$query_vars['post_type_archive_product'] = true;
+		}
+
+		if ( empty( $query_vars['pagename'] )
+			&& empty( $query_vars['p'] )
+			&& empty( $query_vars['name'] )
+			&& ! isset( $query_vars['post_type'] )
+		) {
 			if ( 'page' === get_option( 'show_on_front' ) ) {
 				$front_id = (int) get_option( 'page_on_front' );
 				if ( $front_id ) {
 					$query_vars['page_id'] = $front_id;
 				}
 			}
-			// else: blog front page — nothing needed, WP handles it
 		}
 
 		return $query_vars;
